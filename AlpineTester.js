@@ -1,4 +1,5 @@
-// ** AlpineTester
+// * AlpineTester
+// ***********************************************************************
 function AlpineTester() {
     this.displayTestInfo = function(test) {
         console.log("Name: " + test.name);
@@ -11,15 +12,15 @@ function AlpineTester() {
     }
 }
 
+// ***********************************************************************
+
 // * Tests & Reports Array to hold before and after data.
-var tests = [];
-var reports = [];
+var tests = [], reports = [];
 
 // * Push testObjects into tests array.
-for (test in testObjects) {
-    tests.push(testObjects[test]);
-}
+for (test in testObjects) tests.push(testObjects[test]);
 
+// * RUN TESTS!
 var AlpineTester = new AlpineTester();
 for (test in tests) {
     reports.push(AlpineTester.run(tests[test]));

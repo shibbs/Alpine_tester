@@ -24,5 +24,35 @@ var testObjects = {
             assertion: "firmware said this",
             timeout: 120
         }]
+    },
+
+    ISOTest: {
+        name: "ISO Test",
+        instructions:[{
+            name: "Check that ISO control is functional.",
+            command: ["click","$TAG"],
+            assertion: "firmware said this",
+            timeout: 120
+        }]
+    },
+
+    ApertureTest: {
+        name: "Aperture Test",
+        instructions:[{
+            name: "Check that Aperture control is functional.",
+            command: ["click","$TAG"],
+            assertion: "firmware said this",
+            timeout: 120
+        }]
+    },
+
+    ShutterSpeedTest: {
+        name: "Shutter Speed Test",
+        instructions:[{
+            name: "Check that Shutter Speed control is functional",
+            command: ["click","$TAG"],
+            assertion: "firmware said this",
+            timeout: 120
+        }]
     }
 };

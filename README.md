@@ -1,2 +1,3 @@
-# Alpine_tester
-Repo for alpine device tester scripts
+# AlpineTester
+---
+A test suite for Alpine devices.

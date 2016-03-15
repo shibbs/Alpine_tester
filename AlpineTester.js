@@ -3,7 +3,7 @@
 function AlpineTester() {
     this.displayTestInfo = function(test) {
         console.log("Name: " + test.name);
-        console.log("Instructions: " + test.instructions);
+        console.log("Instructions: " + JSON.stringify(test.instructions));
     },
 
     this.run = function(test) {

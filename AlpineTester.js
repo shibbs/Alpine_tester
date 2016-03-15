@@ -1,40 +1,29 @@
-var tests = [];
-var reports = [];
-
-var basicTest = {
-    name: "Basic Test",
-    instructions:[{
-        name: "Click This Tag",
-        command: ["click","$TAG"],
-        assertion: "firmware said this",
-        timeout: 120
-    },
-    {
-        name: "My Second Instruction",
-        command: ["setField","$FieldName", 0],
-        assertion: undefined,
-        type: 'positive',
-        timeout: 360
-    }]
-};
-
+// ** AlpineTester
 function AlpineTester() {
-    this.displayTestInfo = function(testObject) {
-        console.log("Name: " + testObject.name);
-        console.log("Instructions: " + testObject.instructions[0].name)
+    this.displayTestInfo = function(test) {
+        console.log("Name: " + test.name);
+        console.log("Instructions: " + test.instructions);
     },
 
-    this.run = function(testObject) {
-        this.report(testObject);
-        this.displayTestInfo(testObject);
-        // return result;
-    },
-
-    this.report = function(result) {
-        // console.log("Report: " + result);
-        // reports.push("Report!");
+    this.run = function(test) {
+        this.displayTestInfo(test);
+        return "PASS!";
     }
 }
 
-var tester = new AlpineTester();
-tester.run(basicTest)
+// * Tests & Reports Array to hold before and after data.
+var tests = [];
+var reports = [];
+
+// * Push testObjects into tests array.
+for (test in testObjects) {
+    tests.push(testObjects[test]);
+}
+
+var AlpineTester = new AlpineTester();
+for (test in tests) {
+    reports.push(AlpineTester.run(tests[test]));
+}
+
+// * Print reports.
+console.log(reports);

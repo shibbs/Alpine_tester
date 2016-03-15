@@ -1,17 +1,40 @@
 var tests = [];
 var reports = [];
 
-function AlpineTester(_test) {
-    this.test = _test;
-    this.run = function(test) {
-        console.log("Running: " + this.test);
+var basicTest = {
+    name: "Basic Test",
+    instructions:[{
+        name: "Click This Tag",
+        command: ["click","$TAG"],
+        assertion: "firmware said this",
+        timeout: 120
+    },
+    {
+        name: "My Second Instruction",
+        command: ["setField","$FieldName", 0],
+        assertion: undefined,
+        type: 'positive',
+        timeout: 360
+    }]
+};
+
+function AlpineTester() {
+    this.displayTestInfo = function(testObject) {
+        console.log("Name: " + testObject.name);
+        console.log("Instructions: " + testObject.instructions[0].name)
     },
 
-    this.report = function(test) {
-        console.log("Report: " + this.test);
+    this.run = function(testObject) {
+        this.report(testObject);
+        this.displayTestInfo(testObject);
+        // return result;
+    },
+
+    this.report = function(result) {
+        // console.log("Report: " + result);
+        // reports.push("Report!");
     }
 }
 
-var test = "Hello!";
-var tester = new AlpineTester(test);
-tester.run(test)
+var tester = new AlpineTester();
+tester.run(basicTest)

@@ -1,10 +1,10 @@
 var testObjects = {
     basicTest: {
-        name: "Basic Test",
+        name: 'Basic Test',
         instructions:[{
-            name: "Click This Tag",
-            command: ["click","$TAG"],
-            assertion: "firmware said this",
+            name: 'New TimeLapse.',
+            command: ['click', '#newTimeLapse'],
+            assertion: 'firmware said this',
             timeout: 120
         },
         {

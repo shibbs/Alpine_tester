@@ -4,7 +4,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
-    setTimeout(function() { socket.emit('navigate', 'timelapse/upload'); }, 2000);
+    setTimeout(function() { socket.emit('click', '#newTimeLapse'); }, 2000);
 });
 
 server.listen(PORT, function() {

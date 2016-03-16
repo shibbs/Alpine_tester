@@ -1,15 +1,12 @@
-var socket = io.connect("http://10.1.10.40:3000");
-console.log("Connecting...");
-socket.on('connect', function() {
-    console.log("Connected!");
+var PORT = 3000;
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+io.on('connection', function(socket) {
+    setTimeout(function() { socket.emit('navigate', 'timelapse/upload'); }, 2000);
 });
 
-socket.on('navigate', function(data) {
-    window.location.hash = data;
-    console.log("Navigating to: " + data);
-});
-
-socket.on('click', function(data) {
-    console.log("Clicking: " + data);
-    $(data).click();
+server.listen(PORT, function() {
+    console.log('Listening to... ' + PORT)
 });

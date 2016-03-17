@@ -1,58 +1,58 @@
-var testObjects = {
-    basicTest: {
+exports.testObjects = [
+    {
         name: 'Basic Test',
         instructions:[{
             name: 'New TimeLapse.',
             command: ['click', '#newTimeLapse'],
             assertion: 'firmware said this',
-            timeout: 120
+            timeout: 3000
         },
         {
             name: "My Second Instruction",
             command: ["setField","$FieldName", 0],
             assertion: undefined,
             type: 'positive',
-            timeout: 360
+            timeout: 3000
         }]
     },
 
-    photoTest: {
+    {
         name: "Photo Test",
         instructions:[{
             name: "Check # of Photos.",
             command: ["click","$TAG"],
-            assertion: "firmware said this",
-            timeout: 120
+            assertion: "how are you",
+            timeout: 3000
         }]
     },
 
-    ISOTest: {
+    {
         name: "ISO Test",
         instructions:[{
             name: "Check that ISO control is functional.",
             command: ["click","$TAG"],
-            assertion: "firmware said this",
-            timeout: 120
+            assertion: "great to meet you",
+            timeout: 3000
         }]
     },
 
-    ApertureTest: {
+    {
         name: "Aperture Test",
         instructions:[{
             name: "Check that Aperture control is functional.",
             command: ["click","$TAG"],
-            assertion: "firmware said this",
-            timeout: 120
+            assertion: "produce products",
+            timeout: 3000
         }]
     },
 
-    ShutterSpeedTest: {
+    {
         name: "Shutter Speed Test",
         instructions:[{
             name: "Check that Shutter Speed control is functional",
             command: ["click","$TAG"],
-            assertion: "firmware said this",
-            timeout: 120
+            assertion: "sample the products",
+            timeout: 3000
         }]
     }
-};
+];

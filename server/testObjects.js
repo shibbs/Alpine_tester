@@ -5,13 +5,13 @@ exports.testObjects = [
         {
             name: 'Reset App',
             command: ['navigate', 'home'],
-            assertion: undefined,
+            assertion: "usb_off: Entry",
             timeout: 3000
         },
         {
             name: 'New TimeLapse.',
             command: ['click', '#newTimeLapse'],
-            assertion: undefined,
+            assertion: "usb_on: Entry",
             timeout: 3000
         }]
     },
@@ -22,13 +22,13 @@ exports.testObjects = [
         {
             name: 'Reset App',
             command: ['navigate', 'home'],
-            assertion: undefined,
+            assertion: "usb_init: Exit",
             timeout: 3000
         },
         {
             name: 'New TimeLapse.',
             command: ['click', '#newTimeLapse'],
-            assertion: undefined,
+            assertion: "usb_on: Init",
             timeout: 3000
         }]
     },
@@ -85,7 +85,7 @@ exports.testObjects = [
         {
             name: 'Reset App',
             command: ['navigate', 'home'],
-            assertion: undefined,
+            assertion: "Never gonna hear this!",
             timeout: 3000
         }]
     }

@@ -1,67 +1,94 @@
 var chalk = require('chalk');
 
 module.exports.AlpineTest = function AlpineTest(testDescription){
-    var mName = testDescription.name;
-    var mFinish, mRunCommand, mListenAssert;
-    var mInstruction;
-    var mInstructions = testDescription.instructions;
-    var mCurrentInst = 0;
+    return {
+      mName: testDescription.name,
+      mFinish: undefined,
+      mRunCommand: undefined,
+      mListenAssert: undefined,
+      mInstruction: undefined,
+      mInstructions: testDescription.instructions,
+      mCurrentInst: 0,
 
-    function checkResult(result){
-        if('pass' == result){
-            pass();
-            return true;
-        }
-        if('fail' == result){
-            fail();
-            return false;
-        }
+      checkResult: function checkResult(result){
+          if('pass' == result){
+              this.pass();
+              return true;
+          }
+          if('fail' == result){
+              this.fail();
+              return false;
+          }
 
-        console.log(chalk.red("Did not understand result!"));
-        return false;
-    }
+          console.log(chalk.red("Did not understand result!"));
+          return false;
+      },
 
-    function pass(){
-    }
+      pass: function pass(){
+      },
 
-    function fail(){
-        console.log(chalk.red('\t\t'+mInstruction.name+" failed."));
-        mFinish('fail');
-    }
+      fail: function fail(){
+          console.log(chalk.red('\t\t'+this.mInstruction.name+" failed."));
+          this.cleanUp();
+          this.mFinish('fail');
+          this.mFinish = undefined;
+      },
 
-    function onCommandDone(result){
-        var res = checkResult(result);
-        if(res){
-            if(mInstruction.assertion)
-                mListenAssert(mInstruction.assertion, mInstruction.timeout, onAssertDone);
-            else // If we dont have any assertion then just return pass
-                onAssertDone('pass');
-        }
-    }
+      onCommandDone: function onCommandDone(result){
+          var res = this.checkResult(result);
+          if(res){
+              if(this.mInstruction.assertion)
+                  this.mListenAssert(this.mInstruction.assertion, this.mInstruction.timeout, this.onAssertDone);
+              else // If we dont have any assertion then just return pass
+                  this.onAssertDone('pass');
+          }
+      },
 
-    function onAssertDone(result){
-        checkResult(result)
-        runInstruction();
-    }
+      onAssertDone: function onAssertDone(result){
+          this.checkResult(result);
+          this.runInstruction();
+      },
 
-    function runInstruction(){
-        if(mCurrentInst < mInstructions.length){
-            mInstruction = mInstructions[mCurrentInst];
-        }else{
-            mFinish('pass');
-        }
-        mRunCommand(mInstruction.command, mInstruction.timeout, onCommandDone);
-        mCurrentInst++;
-    }
+      runInstruction: function runInstruction(){
+          if(!this.mInstructions){
+            return;
+          }
+          
+          if(this.mCurrentInst < this.mInstructions.length){
+              this.mInstruction = this.mInstructions[this.mCurrentInst];
+          }else{
+              this.cleanUp();
+              this.mFinish('pass');
+              this.mFinish = undefined;
+          }
 
-    this.getName = function getName(){
-        return mName;
-    };
+          if(!this.mInstruction){ // Somehow we're getting rogue calls into here. Squash it
+              return;
+          }
 
-    this.run = function run(runCommand, listenAssert, finishCallback){
-        mFinish = finishCallback;
-        mRunCommand = runCommand;
-        mListenAssert = listenAssert;
-        runInstruction();
-    };
-}
+          console.log("\tRunning instruction "+ (this.mCurrentInst+1) +" of "+ this.mInstructions.length +": "+ chalk.blue(this.mInstruction.name));
+
+          this.mCurrentInst++;
+          this.mRunCommand(this.mInstruction.command, this.mInstruction.timeout, this.onCommandDone);
+      },
+
+      getName: function getName(){
+          return this.mName;
+      },
+
+      run: function run(runCommand, listenAssert, finishCallback){
+          this.mFinish = finishCallback;
+          this.mRunCommand = runCommand;
+          this.mListenAssert = listenAssert;
+          this.runInstruction();
+      },
+
+      cleanUp: function cleanUp(){
+        this.mRunCommand = undefined;
+        this.mListenAssert = undefined;
+        this.mInstruction = undefined;
+        this.mInstructions = undefined;
+        this.mCurrentInst = undefined;
+      }
+  };
+};

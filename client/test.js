@@ -2,14 +2,16 @@ var testInit = function(){
 
     console.log("Connecting to the test server...");
 
-    var socket = io.connect("http://10.1.10.124:3000");
+    var socket = io.connect("http://10.1.10.160:3000");
 
     var pass = function(){
-        socket.emit('result', {result: 'pass'});
+        console.log("Returning result: Pass");
+        socket.emit('result', {result: 'pass', timestamp: Date.now()});
     };
 
     var fail = function(){
-        socket.emit('result', {result: 'fail'});
+        console.log("Returning result: Pass");
+        socket.emit('result', {result: 'fail', timestamp: Date.now()});
     };
 
 
@@ -20,12 +22,12 @@ var testInit = function(){
     socket.on('navigate', function(data) {
         window.location.hash = data;
         console.log("Navigating to: " + data);
-        setTimeout(pass, 250);
+        setTimeout(pass, 2000);
     });
 
     socket.on('click', function(data) {
         console.log("Clicking: " + data);
         $(data).click();
-        setTimeout(pass, 250);
+        setTimeout(pass, 2000);
     });
-}
+};

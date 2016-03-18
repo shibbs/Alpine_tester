@@ -1,17 +1,19 @@
-function testServer(){
+function testServer(tests, serial){
+  var testObjects = require(tests).testObjects;
+
   var PORT = 3000;
   var AlpineTest = require('./AlpineTest').AlpineTest;
   var app = require('express')();
-  var testObjects = require('./testObjects').testObjects;
   var server = require('http').Server(app);
   var io = require('socket.io')(server);
   var sp = require("serialport");
   var SerialPort = sp.SerialPort;
-  var serialPort = new SerialPort("/dev/tty.usbmodem14221", {
+  var serialPort = new SerialPort("/dev/tty.usbmodem"+serial, {
     baudrate: 115200,
     parser: sp.parsers.readline("\n")
   }, false);
   var chalk = require('chalk');
+  var table = require('text-table');
 
   var mSocket;
   var mAssert = '';
@@ -23,6 +25,8 @@ function testServer(){
   var mCurrTest = 0;
 
   var mTimestamp = 0;
+
+  var mTests = [];
 
   function nop(result){}
 
@@ -36,7 +40,7 @@ function testServer(){
   });
 
   server.listen(PORT, function() {
-      console.log(chalk.green('TestServer online. \nListening on port: ' + PORT+'\n'));
+      console.log(chalk.green('Alpine TestServer online. \nListening on port: ' + PORT+'\n'));
   });
 
   function startSerial(){
@@ -73,21 +77,44 @@ function testServer(){
       }
       else{
           console.log(chalk.green("All tests completed."));
-          process.exit();
+          reportResults();
       }
   }
 
+  function reportResults(){
+    console.log("\n\n|-------------- RESULTS --------------|");
+    var prettyTable = [];
+    for(var t in mTests){
+      var reportingTest = mTests[t];
+
+      if(reportingTest.mResult == 'pass')
+        prettyTable.push([chalk.yellow(reportingTest.mName)+": ", chalk.green.bold(reportingTest.mResult)]);
+      else
+        prettyTable.push([chalk.yellow(reportingTest.mName)+": ", chalk.red.bold(reportingTest.mResult)]);
+
+      for(var i in reportingTest.mInstructions){
+        var reportingInstruction = reportingTest.mInstructions[i];
+
+        if(reportingInstruction.result == 'pass')
+          prettyTable.push([ '\t'+reportingInstruction.name, chalk.green(reportingInstruction.result)]);
+        else
+          prettyTable.push([ '\t'+reportingInstruction.name, chalk.red(reportingInstruction.result)]);
+      }
+    }
+    console.log(table(prettyTable));
+
+    console.log("Exiting...");
+    process.exit();
+  }
+
+  /* This doesn't actually do anything yet */
   function resetApp(){
-      /*// Make sure we're always at the start of the app when running a test.
-      console.log("Resetting App...");
-      executeCommand(['navigate', 'home'], 1000, runTest);
-      */
       runTest();
   }
 
   function runTest(){
-      delete mTestInst;
       mTestInst = AlpineTest(testObjects[mCurrTest]);
+      mTests.push(mTestInst);
 
       console.log("Running test "+(mCurrTest+1) +" of "+ testObjects.length+ ": " + chalk.yellow(mTestInst.getName()));
 
@@ -153,4 +180,4 @@ function testServer(){
   }
 }
 
-testServer();
+testServer(process.argv[2], process.argv[3]);

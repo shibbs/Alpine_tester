@@ -9,6 +9,7 @@ module.exports.AlpineTest = function AlpineTest(testDescription){
       mInstruction: undefined,
       mInstructions: testDescription.instructions,
       mCurrentInst: 0,
+      mResult: 'fail',
 
       checkResult: function checkResult(result){
           if('pass' == result){
@@ -25,11 +26,18 @@ module.exports.AlpineTest = function AlpineTest(testDescription){
       },
 
       pass: function pass(){
+          this.mInstructions[this.mCurrentInst - 1].result = 'pass';
       },
 
       fail: function fail(){
           console.log(chalk.red('\t\t'+this.mInstruction.name+" failed."));
+
+          for(var i = this.mCurrentInst - 1; i < this.mInstructions.length; i++){
+            this.mInstructions[i].result = 'fail';
+          }
+
           this.cleanUp();
+          this.mResult = 'fail';
           this.mFinish('fail');
           this.mFinish = undefined;
       },
@@ -50,14 +58,15 @@ module.exports.AlpineTest = function AlpineTest(testDescription){
       },
 
       runInstruction: function runInstruction(){
-          if(!this.mInstructions){
+          if(!this.mRunCommand){ // Somehow we're getting rogue calls into here. Squash it
             return;
           }
-          
+
           if(this.mCurrentInst < this.mInstructions.length){
               this.mInstruction = this.mInstructions[this.mCurrentInst];
           }else{
               this.cleanUp();
+              this.mResult = 'pass';
               this.mFinish('pass');
               this.mFinish = undefined;
           }
@@ -66,9 +75,10 @@ module.exports.AlpineTest = function AlpineTest(testDescription){
               return;
           }
 
-          console.log("\tRunning instruction "+ (this.mCurrentInst+1) +" of "+ this.mInstructions.length +": "+ chalk.blue(this.mInstruction.name));
-
+          console.log("\tRunning instruction "+ (this.mCurrentInst+1) +" of "+ this.mInstructions.length +": "+ chalk.inverse(this.mInstruction.name));
           this.mCurrentInst++;
+
+          if(this.mInstruction.command)
           this.mRunCommand(this.mInstruction.command, this.mInstruction.timeout, this.onCommandDone);
       },
 
@@ -87,7 +97,6 @@ module.exports.AlpineTest = function AlpineTest(testDescription){
         this.mRunCommand = undefined;
         this.mListenAssert = undefined;
         this.mInstruction = undefined;
-        this.mInstructions = undefined;
         this.mCurrentInst = undefined;
       }
   };

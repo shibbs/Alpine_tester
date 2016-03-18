@@ -1,4 +1,4 @@
-var q = require('q');
+var chalk = require('chalk');
 
 module.exports.AlpineTest = function AlpineTest(testDescription){
     var mName = testDescription.name;
@@ -17,23 +17,26 @@ module.exports.AlpineTest = function AlpineTest(testDescription){
             return false;
         }
 
-        console.log("Did not understand result!");
+        console.log(chalk.red("Did not understand result!"));
         return false;
     }
 
     function pass(){
-        console.log("The instruction passed!");
     }
 
     function fail(){
-        console.log("The instruction failed");
+        console.log(chalk.red('\t\t'+mInstruction.name+" failed."));
         mFinish('fail');
     }
 
     function onCommandDone(result){
         var res = checkResult(result);
-        if(res)
-            mListenAssert(mInstruction.assertion, mInstruction.timeout, onAssertDone);
+        if(res){
+            if(mInstruction.assertion)
+                mListenAssert(mInstruction.assertion, mInstruction.timeout, onAssertDone);
+            else // If we dont have any assertion then just return pass
+                onAssertDone('pass');
+        }
     }
 
     function onAssertDone(result){

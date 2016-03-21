@@ -1,118 +1,43 @@
 exports.testObjects = [
   {
-      name: 'Start Timelapse',
-      instructions:[
-      {
-          name: 'Reset App',
-          command: ['navigate', 'home'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'click New TimeLapse',
-          command: ['click', '#newTimeLapse'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'Navigate to Start TL page',
-          command: ['navigate', '#timelapse/upload'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'run timelapse',
-          command: ['click', '#timelapse'],
-          assertion: "tl_stepping: Exit",
-          timeout: 20000
-      }
-      ]
+    // * TL TESTS
+    name: 'Start Timelapse',
+    instructions: [{
+      name: 'navigate home',
+      command: ['navigate', 'home'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'click new TL',
+      command: ['click', '#newTimeLapse'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'navigate to upload',
+      command: ['navigate', '#timelapse/upload'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'validate TL packet',
+      command: ['click', '#timelapse'],
+      assertion: 'valid_pkt',
+      timeout: 30000
+    }, {
+      name: 'run TL',
+      command: undefined,
+      assertion: 'tl_stepping: Exit',
+      timeout: 30000
+    }]
   },
+
   {
-      name: 'Start Timelapse again',
-      instructions:[
-      {
-          name: 'Reset App',
-          command: ['navigate', 'home'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'click New TimeLapse',
-          command: ['click', '#newTimeLapse'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'Navigate to Start TL page',
-          command: ['navigate', '#timelapse/upload'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'run timelapse',
-          command: ['click', '#timelapse'],
-          assertion: "tl_stepping: Exit",
-          timeout: 20000
-      }
-      ]
-  },
-  {
-      name: 'Start Timelapse and again',
-      instructions:[
-      {
-          name: 'Reset App',
-          command: ['navigate', 'home'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'click New TimeLapse',
-          command: ['click', '#newTimeLapse'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'Navigate to Start TL page',
-          command: ['navigate', '#timelapse/upload'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'run timelapse',
-          command: ['click', '#timelapse'],
-          assertion: "tl_stepping: Exit",
-          timeout: 20000
-      }
-      ]
-  },
-  {
-      name: 'Start Timelapse and fail',
-      instructions:[
-      {
-          name: 'Reset App',
-          command: ['navigate', 'home'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'click New TimeLapse',
-          command: ['click', '#newTimeLapse'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'Navigate to Start TL page',
-          command: ['navigate', '#timelapse/upload'],
-          assertion: undefined,
-          timeout: 3000
-      },
-      {
-          name: 'run timelapse',
-          command: ['click', '#timelapse'],
-          assertion: "tl_stepping: Exit",
-          timeout: 3000
-      }
-      ]
+    // * TAKE PHOTOS
+    name: 'Take Photos',
+    instructions: [{
+      name: 'detect photos',
+      command: undefined,
+      assertion: 'TL_StartPhoto',
+      timeout: 30000
+    }]
   }
 ];

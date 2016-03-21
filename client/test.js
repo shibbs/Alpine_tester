@@ -10,7 +10,7 @@ var testInit = function(){
     };
 
     var fail = function(){
-        console.log("Returning result: Pass");
+        console.log("Returning result: Fail");
         socket.emit('result', {result: 'fail', timestamp: Date.now()});
     };
 

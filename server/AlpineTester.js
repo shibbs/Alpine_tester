@@ -1,6 +1,7 @@
 function testServer(tests, serial) {
   var testObjects = require(tests).testObjects;
 
+  var fs = require('fs');
   var PORT = 3000;
   var AlpineTest = require('./AlpineTest').AlpineTest;
   var app = require('express')();
@@ -41,6 +42,10 @@ function testServer(tests, serial) {
     socket.on('result', commandResult);
   });
 
+  console.reset = function () {
+    return process.stdout.write('\033c');
+  }
+
   server.listen(PORT, function() {
     console.log(chalk.green('Alpine TestServer online. \nListening on port: ' + PORT + '\n'));
   });
@@ -56,10 +61,12 @@ function testServer(tests, serial) {
 
         serialPort.on('data', function(data) {
           if (mRecordSerial) {
-            mSerialRecording += data;
+            console.reset();
+            // console.log(chalk.green("----------------------------------- START --------------------------------"));
+            mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
+            // console.log(mSerialRecording);
           }
           if (mAssertListen) {
-            console.log("Listening... "+mSerialRecording);
             if (mRecordSerial) {
               if (mSerialRecording.includes(mAssert)) {
                 assertResult('pass');
@@ -187,6 +194,14 @@ function testServer(tests, serial) {
 
   function assertTimeout() {
     console.log("\t\t" + prettyDate() + " ~ Assert timed out: " + chalk.red("fail"));
+    // console.log(mSerialRecording);
+    var recording = (' ' + mSerialRecording).slice(1);
+    fs.writeFile("/tmp/serialLog", recording, function(status){
+      if(status){
+        return console.log(status);
+      }
+      console.log("Dumped serial to /tmp/serialLog");
+    })
     clearAssert();
     mTestInst.onAssertDone('fail');
   }
@@ -201,6 +216,8 @@ function testServer(tests, serial) {
   function clearAssert() {
     mAssert = '';
     mAssertListen = false;
+    mSerialRecording = '';
+    mRecordSerial = false;
     clearTimeout(mAssertTimeout);
   }
 }

@@ -59,6 +59,7 @@ function testServer(tests, serial) {
             mSerialRecording += data;
           }
           if (mAssertListen) {
+            console.log("Listening... "+mSerialRecording);
             if (mRecordSerial) {
               if (mSerialRecording.includes(mAssert)) {
                 assertResult('pass');
@@ -83,13 +84,12 @@ function testServer(tests, serial) {
       console.log(chalk.yellow(mTestInst.getName()) + " completed with result: " + chalk.green(result) + "\n");
     else {
       console.log(chalk.yellow(mTestInst.getName()) + " completed with result: " + chalk.red(result) + "\n");
-
     }
     mCurrTest++;
     if (mCurrTest < testObjects.length) {
       resetApp();
     } else {
-      console.log(chalk.green("All tests completed."));
+      console.log(chalk.green("All tests completed!"));
       reportResults();
     }
   }
@@ -136,14 +136,23 @@ function testServer(tests, serial) {
 
   function executeCommand(command, timeout) {
     mRecordSerial = true;
-    mCommandTimeout = setTimeout(commandTimeout, timeout);
-    console.log("\t\t" + (new Date(Date.now())) + " Executing command: " + chalk.yellow(JSON.stringify(command)));
+    if(!mCommandTimeout){
+      mCommandTimeout = setTimeout(commandTimeout, timeout);
+      console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
+      mSocket.emit(command[0], command[1]);
+    }
+  }
 
-    mSocket.emit(command[0], command[1]);
+  function prettyDate() {
+    var theTimeIsNow = new Date(Date.now());
+    var hors = theTimeIsNow.getHours();
+    var mens = theTimeIsNow.getMinutes();
+    var sex = theTimeIsNow.getSeconds();
+    return hors + ":" + mens + ":" + sex;
   }
 
   function commandResult(result) {
-    if (result.timestamp <= mTimestamp) {
+    if (result.timestamp <= (mTimestamp + 30)) {
       console.log(chalk.red("Bullshit response received: " + result.timestamp));
       return;
     }
@@ -151,37 +160,39 @@ function testServer(tests, serial) {
     mTimestamp = result.timestamp;
 
     if (result.result == 'pass') {
-      console.log("\t\t" + (new Date(Date.now())) + " Command got result: " + chalk.green(result.result));
+      console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.green(result.result));
     } else {
-      console.log("\t\t" + (new Date(Date.now())) + " Command got result: " + chalk.red(result.result));
+      console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.red(result.result));
     }
     clearTimeout(mCommandTimeout);
+    mCommandTimeout = undefined;
     mTestInst.onCommandDone(result.result);
   }
 
   function commandTimeout() {
-    console.log("\t\t" + (new Date(Date.now())) + " Command timed out: " + chalk.red("fail"));
+    console.log("\t\t" + prettyDate() + " ~ Command timed out: " + chalk.red("fail"));
+    mCommandTimeout = undefined;
     mTestInst.onCommandDone('fail');
   }
 
   function assertResult(result) {
     if (result == 'pass')
-      console.log("\t\t" + (new Date(Date.now())) + " Assert got result: " + chalk.green(result));
+      console.log("\t\t" + prettyDate() + " ~ Assert got result: " + chalk.green(result));
     else {
-      console.log("\t\t" + (new Date(Date.now())) + " Assert got result: " + chalk.red(result));
+      console.log("\t\t" + prettyDate() + " ~ Assert got result: " + chalk.red(result));
     }
     clearAssert();
     mTestInst.onAssertDone(result);
   }
 
   function assertTimeout() {
-    console.log("\t\t" + (new Date(Date.now())) + " Assert timed out: " + chalk.red("fail"));
+    console.log("\t\t" + prettyDate() + " ~ Assert timed out: " + chalk.red("fail"));
     clearAssert();
     mTestInst.onAssertDone('fail');
   }
 
   function listenForAssert(assert, timeout) {
-    console.log("\t\t" + (new Date(Date.now())) + " Listening for assertion: " + chalk.yellow(assert));
+    console.log("\t\t" + prettyDate() + " ~ Listening for assertion: " + chalk.yellow(assert));
     mAssert = assert;
     mAssertListen = true;
     mAssertTimeout = setTimeout(assertTimeout, timeout);

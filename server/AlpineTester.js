@@ -64,6 +64,11 @@ function testServer(tests, serial) {
             // console.reset();
             // console.log(chalk.green("----------------------------------- START --------------------------------"));
             mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
+            // var recording = (' ' + mSerialRecording).slice(1);
+            fs.writeFile("/tmp/serialLog", mSerialRecording, function(status) {
+              // if(status) return console.log(status);
+              // console.log("Dumped serial to /tmp/serialLog");
+            });
             // console.log(mSerialRecording);
           }
 
@@ -195,13 +200,6 @@ function testServer(tests, serial) {
   function assertTimeout() {
     console.log("\t\t" + prettyDate() + " ~ Assert timed out: " + chalk.red("fail"));
     // console.log(mSerialRecording);
-    var recording = (' ' + mSerialRecording).slice(1);
-    fs.writeFile("/tmp/serialLog", recording, function(status){
-      if(status){
-        return console.log(status);
-      }
-      console.log("Dumped serial to /tmp/serialLog");
-    })
     clearAssert();
     mTestInst.onAssertDone('fail');
   }
@@ -209,7 +207,7 @@ function testServer(tests, serial) {
   function listenForAssert(assert, timeout) {
     // If we get passed back a camera setting code, then use that for assertion
     if (mCamCode) {
-      mAssert = mCamCode.toLowerCase();
+      mAssert = "Set Val :" + mCamCode.toLowerCase();
       mCamCode = 0;
     } else {
       mAssert = assert;

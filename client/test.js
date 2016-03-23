@@ -47,38 +47,35 @@ var testInit = function() {
     }, 25000);
   });
 
-  socket.on('camSetting', function(data){
+  socket.on('camSetting', function(data) {
     var setting = data.setting;
     var code;
 
     switch(setting) {
       case 'shutter':
         console.log('Testing Shutter...');
-        if (currentShutterIndex === data.index) ++data.index
+        for (var i = 0; i < data.index; i++) shutterFrame.next();
         code = GetShutterCode(data.index);
-        shutterItemsCallbackMap.active("active", data.index);
         pass(code);
         break;
 
       case 'aperture':
         console.log('Testing Aperture...');
-        if (currentApertureIndex === data.index) ++data.index
+        for (var i = 0; i < data.index; i++) apertureFrame.next();
         code = GetApertureCode(data.index);
-        apertureItemsCallbackMap.active("active", data.index);
         pass(code);
         break;
 
       case 'iso':
         console.log('Testing ISO...');
-        if (currentIsoIndex === data.index) ++data.index
+        for (var i = 0; i < data.index; i++) isoFrame.next();
         code = GetIsoCode(data.index);
-        isoItemsCallbackMap.active("active", data.index);
         pass(code);
         break;
     }
   });
 
-  socket.on('resetSetting', function(data){
+  socket.on('resetSetting', function(data) {
     var setting = data.setting;
   })
 };

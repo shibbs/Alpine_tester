@@ -64,7 +64,7 @@ function testServer(tests, serial) {
             // console.reset();
             // console.log(chalk.green("----------------------------------- START --------------------------------"));
             mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
-            // var recording = (' ' + mSerialRecording).slice(1);
+            var recording = (' ' + mSerialRecording).slice(1);
             fs.writeFile("/tmp/serialLog", mSerialRecording, function(status) {
               // if(status) return console.log(status);
               // console.log("Dumped serial to /tmp/serialLog");

@@ -4,11 +4,12 @@ var testInit = function() {
 
   var socket = io.connect("http://10.1.10.124:3000");
 
-  var pass = function() {
+  var pass = function(code) {
     console.log("Returning result: Pass");
     socket.emit('result', {
       result: 'pass',
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      p: code
     });
   };
 
@@ -48,7 +49,8 @@ var testInit = function() {
 
   socket.on('camSettingShutter', function(data) {
     console.log('Testing Shutter...');
-    pass();
+    var code = GetShutterCode(data.index)
+    pass(code);
 
     setTimeout(function() {
       shutterItemsCallbackMap.active("active", data.index);
@@ -57,7 +59,8 @@ var testInit = function() {
 
   socket.on('camSettingAperture', function(data) {
     console.log('Testing Aperture...');
-    pass();
+    var code = GetApertureCode(data.index);
+    pass(code);
 
     setTimeout(function() {
       apertureItemsCallbackMap.active("active", data.index);
@@ -66,7 +69,8 @@ var testInit = function() {
 
   socket.on('camSettingISO', function(data) {
     console.log('Testing ISO...');
-    pass();
+    var code = GetIsoCode(data.index);
+    pass(code);
 
     setTimeout(function() {
       isoItemsCallbackMap.active("active", data.index);

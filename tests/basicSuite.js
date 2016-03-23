@@ -1,126 +1,102 @@
 exports.testObjects = [
 
   // * TIMELAPSE
-  {
-    name: 'Start Timelapse',
-    instructions: [{
-      name: 'navigate home',
-      command: ['navigate', 'home'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'click new TL',
-      command: ['click', '#newTimeLapse'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'navigate to upload',
-      command: ['navigate', '#timelapse/upload'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'validate TL packet',
-      command: ['click', '#timelapse'],
-      assertion: 'valid_pkt',
-      timeout: 30000
-    }, {
-      name: 'run TL',
-      command: undefined,
-      assertion: 'tl_stepping: Exit',
-      timeout: 30000
-    }]
-  },
-
-  // * PHOTOS
-  {
-    name: 'Take Photos',
-    instructions: [{
-      name: 'detect photos',
-      command: undefined,
-      assertion: 'TL_StartPhoto',
-      timeout: 30000
-    }]
-  },
+  // {
+  //   name: 'Start Timelapse',
+  //   instructions: [{
+  //     name: 'navigate home',
+  //     command: ['navigate', 'home'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'click new TL',
+  //     command: ['click', '#newTimeLapse'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'navigate to upload',
+  //     command: ['navigate', '#timelapse/upload'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'validate TL packet',
+  //     command: ['click', '#timelapse'],
+  //     assertion: 'valid_pkt',
+  //     timeout: 30000
+  //   }, {
+  //     name: 'run TL',
+  //     command: undefined,
+  //     assertion: 'tl_stepping: Exit',
+  //     timeout: 30000
+  //   }]
+  // },
+  //
+  // // * PHOTOS
+  // {
+  //   name: 'Take Photos',
+  //   instructions: [{
+  //     name: 'detect photos',
+  //     command: undefined,
+  //     assertion: 'TL_StartPhoto',
+  //     timeout: 30000
+  //   }]
+  // },
 
   // * CAMERA SETTINGS
   {
     name: 'Verify Camera Settings',
     instructions: [{
-      name: 'navigate to timelapse page',
+      name: 'navigate to camera settings page',
       command: ['navigate', '#settings/camera'],
       assertion: undefined,
       timeout: 30000
     }, {
       name: 'verify shutter speed',
-      command: ['camSettingShutter', { index: Math.floor(Math.random() * 5) + 15 }],
+      command: ['camSetting', { setting: 'shutter', index: Math.floor(Math.random() * 1) + 10 }],
       assertion: 'Got Shutter Spd Pkt',
       timeout: 30000
     }, {
       name: 'verify aperture',
-      command: ['camSettingAperture', { index: Math.floor(Math.random() * 5) + 2 }],
+      command: ['camSetting', { setting: 'aperture', index: Math.floor(Math.random() * 1) + 5 }],
       assertion: 'Got Aperture Pkt',
       timeout: 30000
     }, {
       name: 'verify iso',
-      command: ['camSettingISO', { index: Math.floor(Math.random() * 5) + 2 }],
-      assertion: 'Got Iso Pkt',
-      timeout: 30000
-    }]
-  },
-  {
-    name: 'Verify Camera Settings',
-    instructions: [{
-      name: 'navigate to timelapse page',
-      command: ['navigate', '#settings/camera'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'verify shutter speed',
-      command: ['camSettingShutter', { index: Math.floor(Math.random() * 5) + 15 }],
-      assertion: 'Got Shutter Spd Pkt',
-      timeout: 30000
-    }, {
-      name: 'verify aperture',
-      command: ['camSettingAperture', { index: Math.floor(Math.random() * 5) + 2 }],
-      assertion: 'Got Aperture Pkt',
-      timeout: 30000
-    }, {
-      name: 'verify iso',
-      command: ['camSettingISO', { index: Math.floor(Math.random() * 5) + 2 }],
+      command: ['camSetting', { setting: 'iso', index: Math.floor(Math.random() * 1) + 3 }],
       assertion: 'Got Iso Pkt',
       timeout: 30000
     }]
   },
 
   // * THUMBNAILS
-  {
-    name: 'Verify Thumbnails',
-    instructions: [{
-      name: 'navigate to timelapse page',
-      command: ['navigate', '#timelapse/upload'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'request thumbnail',
-      command: ['click', '.preview'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'bypass thumbnail modal',
-      command: ['click', '#get-thumb'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'verify thumbnail request',
-      command: undefined,
-      assertion: 'usb_thumb: Init',
-      timeout: 30000
-    }, {
-      name: 'check for valid thumbnail',
-      command: ['verify_thumb'],
-      assertion: undefined,
-      timeout: 40000
-    }]
-  },
+  // {
+  //   name: 'Verify Thumbnails',
+  //   instructions: [{
+  //     name: 'navigate to timelapse page',
+  //     command: ['navigate', '#timelapse/upload'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'request thumbnail',
+  //     command: ['click', '.preview'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'bypass thumbnail modal',
+  //     command: ['click', '#get-thumb'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'verify thumbnail request',
+  //     command: undefined,
+  //     assertion: 'usb_thumb: Init',
+  //     timeout: 30000
+  //   }, {
+  //     name: 'check for valid thumbnail',
+  //     command: ['verify_thumb'],
+  //     assertion: undefined,
+  //     timeout: 40000
+  //   }]
+  // },
 
 ];

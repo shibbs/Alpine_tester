@@ -47,34 +47,38 @@ var testInit = function() {
     }, 25000);
   });
 
-  socket.on('camSettingShutter', function(data) {
-    console.log('Testing Shutter...');
-    var code = GetShutterCode(data.index)
-    pass(code);
+  socket.on('camSetting', function(data){
+    var setting = data.setting;
+    var code;
 
-    setTimeout(function() {
-      shutterItemsCallbackMap.active("active", data.index);
-    }, 1000);
+    switch(setting) {
+      case 'shutter':
+        console.log('Testing Shutter...');
+        if (currentShutterIndex === data.index) ++data.index
+        code = GetShutterCode(data.index);
+        shutterItemsCallbackMap.active("active", data.index);
+        pass(code);
+        break;
+
+      case 'aperture':
+        console.log('Testing Aperture...');
+        if (currentApertureIndex === data.index) ++data.index
+        code = GetApertureCode(data.index);
+        apertureItemsCallbackMap.active("active", data.index);
+        pass(code);
+        break;
+
+      case 'iso':
+        console.log('Testing ISO...');
+        if (currentIsoIndex === data.index) ++data.index
+        code = GetIsoCode(data.index);
+        isoItemsCallbackMap.active("active", data.index);
+        pass(code);
+        break;
+    }
   });
 
-  socket.on('camSettingAperture', function(data) {
-    console.log('Testing Aperture...');
-    var code = GetApertureCode(data.index);
-    pass(code);
-
-    setTimeout(function() {
-      apertureItemsCallbackMap.active("active", data.index);
-    }, 1000);
-  });
-
-  socket.on('camSettingISO', function(data) {
-    console.log('Testing ISO...');
-    var code = GetIsoCode(data.index);
-    pass(code);
-
-    setTimeout(function() {
-      isoItemsCallbackMap.active("active", data.index);
-    }, 1000);
-
-  });
+  socket.on('resetSetting', function(data){
+    var setting = data.setting;
+  })
 };

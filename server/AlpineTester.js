@@ -166,7 +166,7 @@ function testServer(tests, serial) {
 
       // Pass sent back a camera code, reassign mCamCode to this code.
       if (result.p) mCamCode = result.p;
-      console.log(mAssert);
+      // console.log(mAssert);
 
     } else {
       console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.red(result.result));
@@ -209,7 +209,6 @@ function testServer(tests, serial) {
   function listenForAssert(assert, timeout) {
     // If we get passed back a camera setting code, then use that for assertion
     if (mCamCode) {
-      console.log(mCamCode);
       mAssert = mCamCode.toLowerCase();
       mCamCode = 0;
     } else {

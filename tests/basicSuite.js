@@ -88,7 +88,7 @@ exports.testObjects = [
       timeout: 30000
     }, {
       name: 'verify iso',
-      command: ['camSettingISO', { index: 4 }],
+      command: ['camSettingISO', { index: Math.floor(Math.random() * 5) + 2 }],
       assertion: 'Got Iso Pkt',
       timeout: 30000
     }]

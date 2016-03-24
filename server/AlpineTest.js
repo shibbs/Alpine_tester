@@ -43,11 +43,14 @@ module.exports.AlpineTest = function AlpineTest(testDescription) {
     },
 
     onCommandDone: function onCommandDone(result) {
-      var res = this.checkResult(result);
+      var res = this.checkResult(result.result);
       if (res) {
-        if (this.mInstruction.assertion)
+        if (this.mInstruction.assertion) {
+          if (result.type && result.type == 'cameraSetting') {
+            this.mInstruction.assertion += result.value;
+          }
           this.mListenAssert(this.mInstruction.assertion, this.mInstruction.timeout, this.onAssertDone);
-        else // If we dont have any assertion then just return pass
+        } else // If we dont have any assertion then just return pass
           this.onAssertDone('pass');
       }
     },

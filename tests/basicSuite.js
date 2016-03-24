@@ -34,9 +34,16 @@ exports.testObjects = [
   // // * PHOTOS
   // {
   //   name: 'Take Photos',
-  //   instructions: [{
+  //   instructions: [
+  //     {
   //     name: 'detect photos',
   //     command: undefined,
+  //     assertion: 'TL_StartPhoto',
+  //     timeout: 30000
+  //   },
+  //   {
+  //     name: 'verify interval',
+  //     command: ['query', { type: 'interval' }],
   //     assertion: 'TL_StartPhoto',
   //     timeout: 30000
   //   }]
@@ -53,17 +60,17 @@ exports.testObjects = [
     }, {
       name: 'verify shutter speed',
       command: ['camSetting', { setting: 'shutter', index: Math.floor(Math.random() * 1) + 10 }],
-      assertion: 'Got Shutter Spd Pkt',
+      assertion: 'Set Val :',
       timeout: 30000
     }, {
       name: 'verify aperture',
       command: ['camSetting', { setting: 'aperture', index: Math.floor(Math.random() * 1) + 5 }],
-      assertion: 'Got Aperture Pkt',
+      assertion: 'Set Val :',
       timeout: 30000
     }, {
       name: 'verify iso',
       command: ['camSetting', { setting: 'iso', index: Math.floor(Math.random() * 3) + 7 }],
-      assertion: 'Got Iso Pkt',
+      assertion: 'Set Val :',
       timeout: 30000
     }]
   },

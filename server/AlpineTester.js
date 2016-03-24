@@ -24,31 +24,34 @@ function testServer(tests, serial) {
   var mAssertTimeout;
   var mCommandTimeout;
   var mTestInst;
-  var mResult; var mCamCode = null;
+  var mResult;
+
   var mCurrTest = 0;
-
   var mTimestamp = 0;
-
   var mTests = [];
 
   function nop(result) {}
 
+  // ********************************************************************************
+  // * Initialization
+
   io.on('connection', function(socket) {
     console.log(chalk.green("Radian App connected!"));
     mSocket = socket;
-
     startSerial();
-
     socket.on('result', commandResult);
   });
 
-  console.reset = function () {
+  console.reset = function() {
     return process.stdout.write('\033c');
-  }
+  };
 
   server.listen(PORT, function() {
     console.log(chalk.green('Alpine TestServer online. \nListening on port: ' + PORT + '\n'));
   });
+
+  // ********************************************************************************
+  // * SerialPort Analysis
 
   function startSerial() {
     serialPort.open(function(error) {
@@ -56,9 +59,7 @@ function testServer(tests, serial) {
         console.log(chalk.red('Failed to open serial port: ' + error));
       } else {
         console.log(chalk.green('Opened serial port. . . \nRunning tests. . . \n'));
-
         resetApp();
-
         serialPort.on('data', function(data) {
           if (mRecordSerial) {
             // console.reset();
@@ -74,7 +75,6 @@ function testServer(tests, serial) {
 
           if (mAssertListen) {
             if (mRecordSerial) {
-
               // We check the serial print and look for our assertion
               if (mSerialRecording.includes(mAssert)) {
                 assertResult('pass');
@@ -95,11 +95,12 @@ function testServer(tests, serial) {
   }
 
   function testDone(result) {
-    if (result == 'pass')
+    if (result == 'pass') {
       console.log(chalk.yellow(mTestInst.getName()) + " completed with result: " + chalk.green(result) + "\n");
-    else {
+    } else {
       console.log(chalk.yellow(mTestInst.getName()) + " completed with result: " + chalk.red(result) + "\n");
     }
+
     mCurrTest++;
     if (mCurrTest < testObjects.length) {
       resetApp();
@@ -109,6 +110,106 @@ function testServer(tests, serial) {
     }
   }
 
+  // * Doesn't actually do anything yet
+  function resetApp() {
+    runTest();
+  }
+
+  // * Runs test
+  function runTest() {
+    mTestInst = AlpineTest(testObjects[mCurrTest]);
+    mTests.push(mTestInst);
+    console.log("Running test " + (mCurrTest + 1) + " of " + testObjects.length + ": " + chalk.yellow(mTestInst.getName()));
+    mTestInst.run(executeCommand, listenForAssert, testDone);
+  }
+
+  // * Sends command from test object to the client for execution
+  function executeCommand(command, timeout) {
+    mRecordSerial = true;
+    if(!mCommandTimeout) {
+      mCommandTimeout = setTimeout(commandTimeout, timeout);
+      console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
+      mSocket.emit(command[0], command[1]);
+    }
+  }
+
+  // * Evaluates result from executeCommand
+  function commandResult(result) {
+    // if (result.timestamp <= (mTimestamp + 30)) {
+    //   console.log(chalk.red("Bullshit response received: " + result.timestamp));
+    //   return;
+    // }
+
+    // console.log(result);
+
+    mTimestamp = result.timestamp;
+
+    if (result.result == 'pass') {
+      console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.green(result.result));
+    } else {
+      console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.red(result.result));
+    }
+
+    clearTimeout(mCommandTimeout);
+    mCommandTimeout = undefined;
+    mTestInst.onCommandDone(result);
+  }
+
+  // * Timeout to make sure tests keep moving if something fails
+  function commandTimeout() {
+    console.log("\t\t" + prettyDate() + " ~ Command timed out: " + chalk.red("fail"));
+    mCommandTimeout = undefined;
+    mTestInst.onCommandDone('fail');
+  }
+
+  // ********************************************************************************
+  // * Assertions
+
+  function assertResult(result) {
+    if (result == 'pass') {
+      console.log("\t\t" + prettyDate() + " ~ Assert got result: " + chalk.green(result));
+    } else {
+      console.log("\t\t" + prettyDate() + " ~ Assert got result: " + chalk.red(result));
+    }
+    clearAssert();
+    mTestInst.onAssertDone(result);
+  }
+
+  function assertTimeout() {
+    console.log("\t\t" + prettyDate() + " ~ Assert timed out: " + chalk.red("fail"));
+    // console.log(mSerialRecording);
+    clearAssert();
+    mTestInst.onAssertDone('fail');
+  }
+
+  function listenForAssert(assert, timeout) {
+    mAssert = assert;
+    console.log("\t\t" + prettyDate() + " ~ Listening for assertion: " + chalk.yellow(mAssert));
+    mAssertListen = true;
+    mAssertTimeout = setTimeout(assertTimeout, timeout);
+  }
+
+  function clearAssert() {
+    mAssert = '';
+    mAssertListen = false;
+    mSerialRecording = '';
+    mRecordSerial = false;
+    clearTimeout(mAssertTimeout);
+  }
+
+  // ********************************************************************************
+  // *  Helpers
+
+  // * Formats a pretty date
+  function prettyDate() {
+    var theTimeIsNow = new Date(Date.now());
+    var hors = theTimeIsNow.getHours();
+    var mens = theTimeIsNow.getMinutes();
+    var sex = theTimeIsNow.getSeconds();
+    return hors + ":" + mens + ":" + sex;
+  }
+
+  // * Prints final report & exits
   function reportResults() {
     console.log("\n\n|---------------- RESULTS ---------------|");
     var prettyTable = [];
@@ -130,113 +231,9 @@ function testServer(tests, serial) {
       }
     }
     console.log(table(prettyTable));
-
     console.log("Exiting...");
     process.exit();
   }
-
-  /* This doesn't actually do anything yet */
-  function resetApp() {
-    runTest();
-  }
-
-  function runTest() {
-    mTestInst = AlpineTest(testObjects[mCurrTest]);
-    mTests.push(mTestInst);
-
-    console.log("Running test " + (mCurrTest + 1) + " of " + testObjects.length + ": " + chalk.yellow(mTestInst.getName()));
-
-    mTestInst.run(executeCommand, listenForAssert, testDone);
-  }
-
-  function executeCommand(command, timeout) {
-    mRecordSerial = true;
-    if(!mCommandTimeout){
-      mCommandTimeout = setTimeout(commandTimeout, timeout);
-      console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
-      mSocket.emit(command[0], command[1]);
-    }
-  }
-
-  function commandResult(result) {
-    if (result.timestamp <= (mTimestamp + 30)) {
-      // console.log(chalk.red("Bullshit response received: " + result.timestamp));
-      // return;
-    }
-
-    mTimestamp = result.timestamp;
-
-    if (result.result == 'pass') {
-      console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.green(result.result));
-
-      // Pass sent back a camera code, reassign mCamCode to this code.
-      if (result.p) mCamCode = result.p;
-      // console.log(mAssert);
-
-    } else {
-      console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.red(result.result));
-    }
-    clearTimeout(mCommandTimeout);
-    mCommandTimeout = undefined;
-    mTestInst.onCommandDone(result.result);
-  }
-
-  function commandTimeout() {
-    console.log("\t\t" + prettyDate() + " ~ Command timed out: " + chalk.red("fail"));
-    mCommandTimeout = undefined;
-    mTestInst.onCommandDone('fail');
-  }
-
-  function assertResult(result) {
-    if (result == 'pass')
-      console.log("\t\t" + prettyDate() + " ~ Assert got result: " + chalk.green(result));
-    else {
-      console.log("\t\t" + prettyDate() + " ~ Assert got result: " + chalk.red(result));
-    }
-    clearAssert();
-    mTestInst.onAssertDone(result);
-  }
-
-  function assertTimeout() {
-    console.log("\t\t" + prettyDate() + " ~ Assert timed out: " + chalk.red("fail"));
-    // console.log(mSerialRecording);
-    clearAssert();
-    mTestInst.onAssertDone('fail');
-  }
-
-  function listenForAssert(assert, timeout) {
-    // If we get passed back a camera setting code, then use that for assertion
-    if (mCamCode) {
-      mAssert = "Set Val :" + mCamCode.toLowerCase();
-      mCamCode = 0;
-    } else {
-      mAssert = assert;
-    }
-    console.log("\t\t" + prettyDate() + " ~ Listening for assertion: " + chalk.yellow(mAssert));
-    mAssertListen = true;
-    mAssertTimeout = setTimeout(assertTimeout, timeout);
-  }
-
-  function clearAssert() {
-    mAssert = '';
-    mAssertListen = false;
-    mSerialRecording = '';
-    mRecordSerial = false;
-    clearTimeout(mAssertTimeout);
-  }
-
-  // ********************************************************************************
-  // * Utilitarian Helpers
-
-  function prettyDate() {
-    var theTimeIsNow = new Date(Date.now());
-    var hors = theTimeIsNow.getHours();
-    var mens = theTimeIsNow.getMinutes();
-    var sex = theTimeIsNow.getSeconds();
-    return hors + ":" + mens + ":" + sex;
-  }
-
-
 }
 
 testServer(process.argv[2], process.argv[3]);

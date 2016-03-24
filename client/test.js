@@ -1,16 +1,25 @@
 var testInit = function() {
-
   console.log("Connecting to the test server...");
-
   var socket = io.connect("http://10.1.10.124:3000");
 
-  var pass = function(code) {
+  var pass = function(dataObject) {
     console.log("Returning result: Pass");
-    socket.emit('result', {
+
+    // Default return object
+    var resultObject = {
       result: 'pass',
       timestamp: Date.now(),
-      p: code
-    });
+      type: '',
+      value: ''
+    };
+
+    // If it's a specific data object, we pass that in as well.
+    if (dataObject) {
+      resultObject.value = dataObject.value;
+      resultObject.type = dataObject.type;
+    }
+
+    socket.emit('result', resultObject);
   };
 
   var fail = function() {
@@ -20,6 +29,9 @@ var testInit = function() {
       timestamp: Date.now()
     });
   };
+
+  // ********************************************************************************
+  // * Actions the client responds to
 
   socket.on('connect', function() {
     console.log("Connected!");
@@ -37,6 +49,12 @@ var testInit = function() {
     setTimeout(pass, 500);
   });
 
+  socket.on('query', function(data) {
+    console.log("Querying: " + data.type);
+    var dataObject = { type: 'interval', value: RadianApp.app.visibleTimeLapse.get('intervalSeconds') };
+    pass(dataObject);
+  });
+
   socket.on('verify_thumb', function() {
     console.log("Verifying thumbnail...");
     setTimeout(function() {
@@ -49,28 +67,29 @@ var testInit = function() {
 
   socket.on('camSetting', function(data) {
     var setting = data.setting;
-    var code;
+    var index = data.index;
+    var dataObject = { type: "cameraSetting", value: 0 };
 
     switch(setting) {
       case 'shutter':
         console.log('Testing Shutter...');
-        for (var i = 0; i < data.index; i++) shutterFrame.next();
-        code = GetShutterCode(data.index);
-        pass(code);
+        for (var i = 0; i < index; i++) shutterFrame.next();
+        dataObject.value = GetShutterCode(index);
+        pass(dataObject);
         break;
 
       case 'aperture':
         console.log('Testing Aperture...');
-        for (var i = 0; i < data.index; i++) apertureFrame.next();
-        code = GetApertureCode(data.index);
-        pass(code);
+        for (var i = 0; i < index; i++) apertureFrame.next();
+        dataObject.value = GetApertureCode(index);
+        pass(dataObject);
         break;
 
       case 'iso':
         console.log('Testing ISO...');
-        for (var i = 0; i < data.index; i++) isoFrame.next();
-        code = GetIsoCode(data.index);
-        pass(code);
+        for (var i = 0; i < index; i++) isoFrame.next();
+        dataObject.value = GetIsoCode(index);
+        pass(dataObject);
         break;
     }
   });

@@ -1,55 +1,55 @@
 exports.testObjects = [
 
   // * TIMELAPSE
-  {
-    name: 'Basic Timelapse',
-    instructions: [{
-      name: 'navigate home',
-      command: ['navigate', 'home'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'click new TL',
-      command: ['click', '#newTimeLapse'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'navigate to upload',
-      command: ['navigate', '#timelapse/upload'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'validate TL packet',
-      command: ['click', '#timelapse'],
-      assertion: 'valid_pkt',
-      timeout: 30000
-    }, {
-      name: 'run TL',
-      command: undefined,
-      assertion: 'tl_stepping: Exit',
-      timeout: 30000
-    }, {
-      name: 'wait...',
-      command: ['wait', 5000],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'pause TL',
-      command: ['click', '.stopBLE'],
-      assertion: 'tl_paused: Entry',
-      timeout: 30000
-    }, {
-      name: 'wait...',
-      command: ['wait', 5000],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'resume TL',
-      command: ['click', '.stopBLE'],
-      assertion: 'tl_paused: Unpause',
-      timeout: 30000
-    }]
-  },
+  // {
+  //   name: 'Basic Timelapse',
+  //   instructions: [{
+  //     name: 'navigate home',
+  //     command: ['navigate', 'home'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'click new TL',
+  //     command: ['click', '#newTimeLapse'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'navigate to upload',
+  //     command: ['navigate', '#timelapse/upload'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'validate TL packet',
+  //     command: ['click', '#timelapse'],
+  //     assertion: 'valid_pkt',
+  //     timeout: 30000
+  //   }, {
+  //     name: 'run TL',
+  //     command: undefined,
+  //     assertion: 'tl_stepping: Exit',
+  //     timeout: 30000
+  //   }, {
+  //     name: 'wait...',
+  //     command: ['wait', 5000],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'pause TL',
+  //     command: ['click', '.stopBLE'],
+  //     assertion: 'tl_paused: Entry',
+  //     timeout: 30000
+  //   }, {
+  //     name: 'wait...',
+  //     command: ['wait', 5000],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'resume TL',
+  //     command: ['click', '.stopBLE'],
+  //     assertion: 'tl_paused: Unpause',
+  //     timeout: 30000
+  //   }]
+  // },
 
   // * PHOTOS
   // {
@@ -60,14 +60,30 @@ exports.testObjects = [
   //     command: undefined,
   //     assertion: 'TL_StartPhoto',
   //     timeout: 30000
-  //   },
-  //   {
+  //   }]
+  // },
+
+  // * INTERVAL
+  {
+    name: 'Intervals',
+    instructions: [
+      {
+      name: 'detect photos',
+      command: ['query', { type: 'interval', goal: 2 }],
+      assertion: 'TL_StartPhoto',
+      timeout: 300000
+    }]
+  },
+
+  // * INTERVAL
+  // {
+  // {
   //     name: 'verify interval',
   //     command: ['query', { type: 'interval' }],
   //     assertion: 'TL_StartPhoto',
   //     timeout: 30000
-  //   }]
-  // },
+  //   }
+
 
   // * CAMERA SETTINGS
   // {

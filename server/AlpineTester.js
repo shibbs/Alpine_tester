@@ -25,6 +25,9 @@ function testServer(tests, serial) {
   var mCommandTimeout;
   var mTestInst;
   var mResult;
+  var mAssertSatisfy = false;
+  var mAssertGoal, mAssertPreviousTime;
+  var mAssertCount = 0;
 
   var mCurrTest = 0;
   var mTimestamp = 0;
@@ -60,38 +63,62 @@ function testServer(tests, serial) {
       } else {
         console.log(chalk.green('Opened serial port. . . \nRunning tests. . . \n'));
         resetApp();
-        serialPort.on('data', function(data) {
-          if (mRecordSerial) {
-            // console.reset();
-            // console.log(chalk.green("----------------------------------- START --------------------------------"));
-            mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
-            var recording = (' ' + mSerialRecording).slice(1);
-            fs.writeFile("/tmp/serialLog", mSerialRecording, function(status) {
-              // if(status) return console.log(status);
-              // console.log("Dumped serial to /tmp/serialLog");
-            });
-            // console.log(mSerialRecording);
-          }
-
-          if (mAssertListen) {
-            if (mRecordSerial) {
-              // We check the serial print and look for our assertion
-              if (mSerialRecording.includes(mAssert)) {
-                assertResult('pass');
-                mSerialRecording = '';
-                mRecordSerial = false;
-              }
-            } else {
-              if (data.includes(mAssert)) {
-                assertResult('pass');
-                mSerialRecording = '';
-                mRecordSerial = false;
-              }
-            }
-          }
-        });
+        serialPort.on('data', assertionListen);
       }
     });
+  }
+
+  function assertionListen(data) {
+    if(mRecordSerial){
+      mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
+      mSerialRecording = (' ' + mSerialRecording).slice(1);
+    }
+
+    if (mAssertListen) { // Only check the data if we're actually listening for it.
+
+      if(mAssertSatisfy){
+        clearRecording(); // Don't record. We need real time data.
+
+        if(mAssertCount == mAssertGoal){
+          mAssertCount = 0;
+          assertResult('pass');
+        }else{
+          if (data.includes(mAssert)){ // Time this and count it
+            if(mAssertCount == 0){
+              mAssertPreviousTime = Date.now();
+              mAssertCount++;
+            }else{
+              if(Date.now() - mAssertPreviousTime >= (mAssertInterval - 250) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 250)){
+                mAssertCount++;
+                mAssertPreviousTime = Date.now();
+              } else{
+                console.log(chalk.red("\t\tInterval Timer blew it."));
+                assertCount = 0;
+                assertResult('fail');
+              }
+            }
+
+          }
+        }
+      }else{
+        if (mRecordSerial) { // If we've been recording then check the record
+          if (mSerialRecording.includes(mAssert)) {
+            assertResult('pass'); // Fail result comes from timeout
+            clearRecording();
+          }
+        } else { // If we're not recording then just listen to the data stream
+          if (data.includes(mAssert)) {
+            assertResult('pass'); // Fail result comes from timeout
+            clearRecording();
+          }
+        }
+      }
+    }
+  }
+
+  function clearRecording(){
+    mSerialRecording = '';
+    mRecordSerial = false;
   }
 
   function testDone(result) {
@@ -133,23 +160,31 @@ function testServer(tests, serial) {
       mCommandTimeout = setTimeout(commandTimeout, timeout);
       console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
 
-      if (command[0] == 'wait') {
-        setTimeout(function() {
-          commandResult({ result: 'pass' });
-        }, command[1]);
-
-      } else {
-        mSocket.emit(command[0], command[1]);
+      switch(command[0]){
+        case 'wait':
+          setTimeout(function() {
+            commandResult({ result: 'pass' });
+          }, command[1]);
+          break;
+        case 'query':
+          if(command[1].type == 'interval'){
+            mAssertSatisfy = true;
+            mAssertGoal = command[1].goal;
+          }
+          mSocket.emit(command[0], command[1]);
+        default:
+          mSocket.emit(command[0], command[1]);
       }
     }
   }
 
   // * Evaluates result from executeCommand
   function commandResult(result) {
-    // if (result.timestamp <= (mTimestamp + 30)) {
-    //   console.log(chalk.red("Bullshit response received: " + result.timestamp));
-    //   return;
-    // }
+    if (result.timestamp <= (mTimestamp + 5)) {
+      console.log(chalk.red("Bullshit response received: " + result.timestamp));
+      console.trace();
+      return;
+    }
 
     mTimestamp = result.timestamp;
 
@@ -157,6 +192,10 @@ function testServer(tests, serial) {
       console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.green(result.result));
     } else {
       console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.red(result.result));
+    }
+
+    if(mAssertSatisfy){
+      mAssertInterval = result.value * 1000;
     }
 
     clearTimeout(mCommandTimeout);

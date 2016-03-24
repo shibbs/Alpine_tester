@@ -123,13 +123,24 @@ function testServer(tests, serial) {
     mTestInst.run(executeCommand, listenForAssert, testDone);
   }
 
+  // ********************************************************************************
+  // * Commands
+
   // * Sends command from test object to the client for execution
   function executeCommand(command, timeout) {
     mRecordSerial = true;
     if(!mCommandTimeout) {
       mCommandTimeout = setTimeout(commandTimeout, timeout);
       console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
-      mSocket.emit(command[0], command[1]);
+
+      if (command[0] == 'wait') {
+        setTimeout(function() {
+          commandResult({ result: 'pass' });
+        }, command[1]);
+
+      } else {
+        mSocket.emit(command[0], command[1]);
+      }
     }
   }
 
@@ -139,8 +150,6 @@ function testServer(tests, serial) {
     //   console.log(chalk.red("Bullshit response received: " + result.timestamp));
     //   return;
     // }
-
-    // console.log(result);
 
     mTimestamp = result.timestamp;
 

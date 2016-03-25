@@ -69,38 +69,35 @@ function testServer(tests, serial) {
   }
 
   function assertionListen(data) {
-    if(mRecordSerial){
+    if (mRecordSerial) {
       mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
       mSerialRecording = (' ' + mSerialRecording).slice(1);
     }
 
     if (mAssertListen) { // Only check the data if we're actually listening for it.
-
-      if(mAssertSatisfy){
+      if (mAssertSatisfy) {
         clearRecording(); // Don't record. We need real time data.
-
-        if(mAssertCount == mAssertGoal){
+        if (mAssertCount == mAssertGoal) {
           mAssertCount = 0;
           assertResult('pass');
-        }else{
-          if (data.includes(mAssert)){ // Time this and count it
-            if(mAssertCount == 0){
+        } else {
+          if (data.includes(mAssert)) { // Time this and count it
+            if (mAssertCount == 0) {
               mAssertPreviousTime = Date.now();
               mAssertCount++;
-            }else{
-              if(Date.now() - mAssertPreviousTime >= (mAssertInterval - 250) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 250)){
+            } else {
+              if (Date.now() - mAssertPreviousTime >= (mAssertInterval - 250) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 250)) {
                 mAssertCount++;
                 mAssertPreviousTime = Date.now();
-              } else{
+              } else {
                 console.log(chalk.red("\t\tInterval Timer blew it."));
                 assertCount = 0;
                 assertResult('fail');
               }
             }
-
           }
         }
-      }else{
+      } else {
         if (mRecordSerial) { // If we've been recording then check the record
           if (mSerialRecording.includes(mAssert)) {
             assertResult('pass'); // Fail result comes from timeout
@@ -160,7 +157,7 @@ function testServer(tests, serial) {
       mCommandTimeout = setTimeout(commandTimeout, timeout);
       console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
 
-      switch(command[0]){
+      switch(command[0]) {
         case 'wait':
           setTimeout(function() {
             commandResult({ result: 'pass' });
@@ -172,8 +169,10 @@ function testServer(tests, serial) {
             mAssertGoal = command[1].goal;
           }
           mSocket.emit(command[0], command[1]);
+          break;
         default:
           mSocket.emit(command[0], command[1]);
+          break;
       }
     }
   }
@@ -195,7 +194,7 @@ function testServer(tests, serial) {
     }
 
     if(mAssertSatisfy){
-      mAssertInterval = result.value * 1000;
+      mAssertInterval = result.value;
     }
 
     clearTimeout(mCommandTimeout);

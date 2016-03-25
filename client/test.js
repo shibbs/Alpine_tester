@@ -45,13 +45,14 @@ var testInit = function() {
 
   socket.on('click', function(element) {
     console.log("Clicking: " + element);
+    pass();
     $(element).click();
-    setTimeout(pass, 500);
   });
 
   socket.on('query', function(data) {
-    console.log("Querying: " + data.type);
-    var dataObject = { type: 'interval', value: RadianApp.app.visibleTimeLapse.get('intervalSeconds') };
+    var type = data.type;
+    console.log("Querying: " + type);
+    var dataObject = { type: 'interval', value: RadianApp.app.visibleTimeLapse.get('intervalSeconds') * 1000 };
     pass(dataObject);
   });
 

@@ -66,24 +66,13 @@ exports.testObjects = [
   // * INTERVAL
   {
     name: 'Intervals',
-    instructions: [
-      {
+    instructions: [{
       name: 'detect photos',
-      command: ['query', { type: 'interval', goal: 2 }],
+      command: ['query', { type: 'interval', goal: 4 }],
       assertion: 'TL_StartPhoto',
       timeout: 300000
     }]
   },
-
-  // * INTERVAL
-  // {
-  // {
-  //     name: 'verify interval',
-  //     command: ['query', { type: 'interval' }],
-  //     assertion: 'TL_StartPhoto',
-  //     timeout: 30000
-  //   }
-
 
   // * CAMERA SETTINGS
   // {

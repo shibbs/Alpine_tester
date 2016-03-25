@@ -49,7 +49,7 @@ module.exports.AlpineTest = function AlpineTest(testDescription) {
           if (result.type && result.type == 'cameraSetting') {
             this.mInstruction.assertion += result.value;
           }
-          
+
           this.mListenAssert(this.mInstruction.assertion, this.mInstruction.timeout, this.onAssertDone);
         } else // If we dont have any assertion then just return pass
           this.onAssertDone('pass');

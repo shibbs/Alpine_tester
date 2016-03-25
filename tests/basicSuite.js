@@ -131,4 +131,15 @@ exports.testObjects = [
   //   }]
   // },
 
+  // * RAMPING
+  {
+    name: 'Ramping',
+    instructions: [{
+      name: 'detect speed ramping',
+      command: undefined,
+      assertion: 'NumRampVals',
+      timeout: 300000
+    }]
+  }
+
 ];

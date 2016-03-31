@@ -52,7 +52,23 @@ var testInit = function() {
   socket.on('query', function(data) {
     var type = data.type;
     console.log("Querying: " + type);
-    var dataObject = { type: 'interval', value: RadianApp.app.visibleTimeLapse.get('intervalSeconds') * 1000 };
+    switch (type) {
+      case 'interval':
+        var interval = RadianApp.app.visibleTimeLapse.get('intervalSeconds') * 1000;
+        var dataObject = { type: 'interval', value: interval };
+        break;
+      case 'duration':
+        var runningTimeLapse = RadianApp.app.getRunningTimeLapse();
+        var duration = runningTimeLapse.getTimeLapseInSeconds();
+        alert(duration);
+        var dataObject = { type: 'duration', value: duration };
+        break;
+      case 'totalPhotos':
+        var runningTimeLapse = RadianApp.app.getRunningTimeLapse();
+        var totalPhotos = runningTimeLapse.getStats().totalPhotos;
+        var dataObject = { type: 'totalPhotos', value: totalPhotos };
+        break;
+    }
     pass(dataObject);
   });
 

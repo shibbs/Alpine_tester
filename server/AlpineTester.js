@@ -28,6 +28,9 @@ function testServer(tests, serial) {
   var mAssertSatisfy = false;
   var mAssertGoal, mAssertPreviousTime;
   var mAssertCount = 0;
+  var mIntervalTest = false;
+  var mDurationTest = false;
+  var mTotalPhotoTest = false;
 
   var mCurrTest = 0;
   var mTimestamp = 0;
@@ -68,6 +71,7 @@ function testServer(tests, serial) {
     });
   }
 
+  // * Listen for assertion
   function assertionListen(data) {
     if (mRecordSerial) {
       mSerialRecording += data.replace(/\r?\n|\r/g, "\n");
@@ -77,26 +81,9 @@ function testServer(tests, serial) {
     if (mAssertListen) { // Only check the data if we're actually listening for it.
       if (mAssertSatisfy) {
         clearRecording(); // Don't record. We need real time data.
-        if (mAssertCount == mAssertGoal) {
-          mAssertCount = 0;
-          assertResult('pass');
-        } else {
-          if (data.includes(mAssert)) { // Time this and count it
-            if (mAssertCount == 0) {
-              mAssertPreviousTime = Date.now();
-              mAssertCount++;
-            } else {
-              if (Date.now() - mAssertPreviousTime >= (mAssertInterval - 250) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 250)) {
-                mAssertCount++;
-                mAssertPreviousTime = Date.now();
-              } else {
-                console.log(chalk.red("\t\tInterval Timer blew it."));
-                assertCount = 0;
-                assertResult('fail');
-              }
-            }
-          }
-        }
+        if (mIntervalTest) verifyInterval(data);
+        else if (mDurationTest) verifyDuration(data);
+        else if (mTotalPhotoTest) verifyTotalPhotos(data);
       } else {
         if (mRecordSerial) { // If we've been recording then check the record
           if (mSerialRecording.includes(mAssert)) {
@@ -113,11 +100,56 @@ function testServer(tests, serial) {
     }
   }
 
-  function clearRecording(){
+  // ********************************************************************************
+  // * Verification
+
+  // * Verifies TL interval
+  function verifyInterval(data) {
+    if (mAssertCount == mAssertGoal) {
+      assertResult('pass');
+    } else {
+      if (data.includes(mAssert)) { // Time this and count it
+        if (mAssertCount == 0) {
+          mAssertPreviousTime = Date.now();
+          mAssertCount++;
+        } else {
+          if (Date.now() - mAssertPreviousTime >= (mAssertInterval - 30) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 30)) {
+            mAssertCount++;
+            mAssertPreviousTime = Date.now();
+            // console.log(mAssertCount);
+          } else {
+            console.log(chalk.red("\t\tInterval Timer blew it."));
+            assertCount = 0;
+            assertResult('fail');
+          }
+        }
+      }
+    }
+  }
+
+  // * Verifies total TL duration
+  function verifyDuration(data) {
+
+  }
+
+  // * Verifies total photos
+  function verifyTotalPhotos(data) {
+    if (mAssertCount == mAssertGoal) {
+      assertResult('pass');
+    } else {
+      if (data.includes(mAssert)) {
+        mAssertCount++;
+      }
+    }
+  }
+
+  // * Purge recorded serial data
+  function clearRecording() {
     mSerialRecording = '';
     mRecordSerial = false;
   }
 
+  // * Enumerates through test suite
   function testDone(result) {
     if (result == 'pass') {
       console.log(chalk.yellow(mTestInst.getName()) + " completed with result: " + chalk.green(result) + "\n");
@@ -164,9 +196,16 @@ function testServer(tests, serial) {
           }, command[1]);
           break;
         case 'query':
-          if(command[1].type == 'interval'){
+          if (command[1].type == 'interval') {
             mAssertSatisfy = true;
+            mIntervalTest = true;
             mAssertGoal = command[1].goal;
+          } else if (command[1].type == 'duration') {
+            mAssertSatisfy = true;
+            mDurationTest = true;
+          } else if (command[1]. type == 'totalPhotos') {
+            mAssertSatisfy = true;
+            mTotalPhotoTest = true;
           }
           mSocket.emit(command[0], command[1]);
           break;
@@ -193,8 +232,21 @@ function testServer(tests, serial) {
       console.log("\t\t" + prettyDate() + " ~ Command got result: " + chalk.red(result.result));
     }
 
-    if(mAssertSatisfy){
-      mAssertInterval = result.value;
+    if (mAssertSatisfy) {
+      switch(result.type) {
+        case 'interval':
+          // Assertion interval is now the interval of the timelapse.
+          mAssertInterval = result.value;
+          break;
+        case 'duration':
+          // Our duration is total duration of the timelapse.
+          mAssertDuration = result.value;
+          break;
+        case 'totalPhotos':
+          // Our goal is now the total number of photos.
+          mAssertGoal = result.value;
+          break;
+      }
     }
 
     clearTimeout(mCommandTimeout);
@@ -241,6 +293,7 @@ function testServer(tests, serial) {
     mAssertListen = false;
     mSerialRecording = '';
     mRecordSerial = false;
+    mAssertCount = 0;
     clearTimeout(mAssertTimeout);
   }
 

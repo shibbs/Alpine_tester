@@ -64,13 +64,35 @@ exports.testObjects = [
   // },
 
   // * INTERVAL
+  // {
+  //   name: 'Intervals',
+  //   instructions: [{
+  //     name: 'verify interval',
+  //     command: ['query', { type: 'interval', goal: 4 }],
+  //     assertion: 'TL_StartPhoto',
+  //     timeout: 300000
+  //   }]
+  // },
+
+  // * DURATION
+  // {
+  //   name: 'Duration',
+  //   instructions: [{
+  //     name: 'verify total duration',
+  //     command: ['query', { type: 'duration'}],
+  //     assertion: undefined,
+  //     timeout: 3000000
+  //   }]
+  // },
+
+  // * TOTAL PHOTOS
   {
-    name: 'Intervals',
+    name: 'Total Photos',
     instructions: [{
-      name: 'detect photos',
-      command: ['query', { type: 'interval', goal: 4 }],
+      name: 'verify total photos',
+      command: ['query', { type: 'totalPhotos'}],
       assertion: 'TL_StartPhoto',
-      timeout: 300000
+      timeout: 30000000
     }]
   },
 
@@ -132,14 +154,13 @@ exports.testObjects = [
   // },
 
   // * RAMPING
-  {
-    name: 'Ramping',
-    instructions: [{
-      name: 'detect speed ramping',
-      command: undefined,
-      assertion: 'NumRampVals',
-      timeout: 300000
-    }]
-  }
-
+  // {
+  //   name: 'Ramping',
+  //   instructions: [{
+  //     name: 'detect speed ramping',
+  //     command: undefined,
+  //     assertion: 'NumRampVals',
+  //     timeout: 30000
+  //   }]
+  // }
 ];

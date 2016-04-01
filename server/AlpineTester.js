@@ -129,7 +129,10 @@ function testServer(tests, serial) {
 
   // * Verifies total TL duration
   function verifyDuration(data) {
-
+    // if (data.includes(mAssert)) {
+    //   var now = Date.now();
+    //   setInterval(function() {  }, 1000);
+    // }
   }
 
   // * Verifies total photos
@@ -141,12 +144,6 @@ function testServer(tests, serial) {
         mAssertCount++;
       }
     }
-  }
-
-  // * Purge recorded serial data
-  function clearRecording() {
-    mSerialRecording = '';
-    mRecordSerial = false;
   }
 
   // * Enumerates through test suite
@@ -164,19 +161,6 @@ function testServer(tests, serial) {
       console.log(chalk.green("All tests completed!"));
       reportResults();
     }
-  }
-
-  // * Doesn't actually do anything yet
-  function resetApp() {
-    runTest();
-  }
-
-  // * Runs test
-  function runTest() {
-    mTestInst = AlpineTest(testObjects[mCurrTest]);
-    mTests.push(mTestInst);
-    console.log("Running test " + (mCurrTest + 1) + " of " + testObjects.length + ": " + chalk.yellow(mTestInst.getName()));
-    mTestInst.run(executeCommand, listenForAssert, testDone);
   }
 
   // ********************************************************************************
@@ -299,6 +283,25 @@ function testServer(tests, serial) {
 
   // ********************************************************************************
   // *  Helpers
+
+  // * Purge recorded serial data
+  function clearRecording() {
+    mSerialRecording = '';
+    mRecordSerial = false;
+  }
+
+  // * Doesn't actually do anything yet
+  function resetApp() {
+    runTest();
+  }
+
+  // * Runs test
+  function runTest() {
+    mTestInst = AlpineTest(testObjects[mCurrTest]);
+    mTests.push(mTestInst);
+    console.log("Running test " + (mCurrTest + 1) + " of " + testObjects.length + ": " + chalk.yellow(mTestInst.getName()));
+    mTestInst.run(executeCommand, listenForAssert, testDone);
+  }
 
   // * Formats a pretty date
   function prettyDate() {

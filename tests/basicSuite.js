@@ -75,26 +75,26 @@ exports.testObjects = [
   // },
 
   // * DURATION
-  // {
-  //   name: 'Duration',
-  //   instructions: [{
-  //     name: 'verify total duration',
-  //     command: ['query', { type: 'duration'}],
-  //     assertion: undefined,
-  //     timeout: 3000000
-  //   }]
-  // },
-
-  // * TOTAL PHOTOS
   {
-    name: 'Total Photos',
+    name: 'Duration',
     instructions: [{
-      name: 'verify total photos',
-      command: ['query', { type: 'totalPhotos'}],
-      assertion: 'TL_StartPhoto',
-      timeout: 30000000
+      name: 'verify total duration',
+      command: ['query', { type: 'duration'}],
+      assertion: 'tl_stepping: Exit',
+      timeout: 3000000
     }]
   },
+
+  // * TOTAL PHOTOS
+  // {
+  //   name: 'Total Photos',
+  //   instructions: [{
+  //     name: 'verify total photos',
+  //     command: ['query', { type: 'totalPhotos'}],
+  //     assertion: 'TL_StartPhoto',
+  //     timeout: 30000000
+  //   }]
+  // },
 
   // * CAMERA SETTINGS
   // {

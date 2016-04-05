@@ -26,7 +26,8 @@ function testServer(tests, serial) {
   var mTestInst;
   var mResult;
   var mAssertSatisfy = false;
-  var mAssertGoal, mAssertPreviousTime;
+  var mAssertGoal;
+  var mAssertPreviousTime = 0;
   var mAssertCount = 0;
   var mIntervalTest = false;
   var mDurationTest = false;
@@ -129,10 +130,15 @@ function testServer(tests, serial) {
 
   // * Verifies total TL duration
   function verifyDuration(data) {
-    // if (data.includes(mAssert)) {
-    //   var now = Date.now();
-    //   setInterval(function() {  }, 1000);
-    // }
+    if (mAssertPreviousTime === 0) mAssertPreviousTime = Date.now();
+    if (data.includes(mAssert)) {
+      console.log(Date.now() - mAssertPreviousTime);
+      if (Date.now() - mAssertPreviousTime >= mAssertDuration - 5000 && Date.now() - mAssertPreviousTime <= (mAssertDuration + 5000)) {
+        assertResult('pass');
+      } else {
+        assertResult('fail');
+      }
+    }
   }
 
   // * Verifies total photos
@@ -187,7 +193,7 @@ function testServer(tests, serial) {
           } else if (command[1].type == 'duration') {
             mAssertSatisfy = true;
             mDurationTest = true;
-          } else if (command[1]. type == 'totalPhotos') {
+          } else if (command[1].type == 'totalPhotos') {
             mAssertSatisfy = true;
             mTotalPhotoTest = true;
           }

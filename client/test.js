@@ -59,8 +59,7 @@ var testInit = function() {
         break;
       case 'duration':
         var runningTimeLapse = RadianApp.app.getRunningTimeLapse();
-        var duration = runningTimeLapse.getTimeLapseInSeconds();
-        alert(duration);
+        var duration = runningTimeLapse.getTimeLapseInSeconds() * 1000;
         var dataObject = { type: 'duration', value: duration };
         break;
       case 'totalPhotos':

@@ -49,6 +49,21 @@ var testInit = function() {
     $(element).click();
   });
 
+  socket.on('set', function(data) {
+    var type = data.type;
+    console.log("Setting: " + type);
+    switch (type) {
+      case 'duration':
+        RadianApp.app.visibleTimeLapse.set({ 'totalTimeMinutes': data.value });
+        break;
+      case 'sramp':
+        ChartMonotonic.mapToView(data.value);
+        ChartMonotonic.addNewPoint(data.value[0], data.value[1]);
+        break;
+    }
+    pass();
+  });
+
   socket.on('query', function(data) {
     var type = data.type;
     console.log("Querying: " + type);

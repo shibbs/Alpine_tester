@@ -75,40 +75,40 @@ exports.testObjects = [
   // },
 
   // * DURATION
-  {
-    name: 'Duration',
-    instructions: [{
-      name: 'navigate home',
-      command: ['navigate', 'home'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'click new TL',
-      command: ['click', '#newTimeLapse'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'navigate to upload',
-      command: ['navigate', '#timelapse/upload'],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'validate TL packet',
-      command: ['click', '#timelapse'],
-      assertion: 'valid_pkt',
-      timeout: 30000
-    }, {
-      name: 'wait...',
-      command: ['wait', 8000],
-      assertion: undefined,
-      timeout: 10000
-    }, {
-      name: 'verify total duration',
-      command: ['query', { type: 'duration' }],
-      assertion: 'tl done',
-      timeout: 30000000
-    }]
-  },
+  // {
+  //   name: 'Duration',
+  //   instructions: [{
+  //     name: 'navigate home',
+  //     command: ['navigate', 'home'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'click new TL',
+  //     command: ['click', '#newTimeLapse'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'navigate to upload',
+  //     command: ['navigate', '#timelapse/upload'],
+  //     assertion: undefined,
+  //     timeout: 30000
+  //   }, {
+  //     name: 'validate TL packet',
+  //     command: ['click', '#timelapse'],
+  //     assertion: 'valid_pkt',
+  //     timeout: 30000
+  //   }, {
+  //     name: 'wait...',
+  //     command: ['wait', 8000],
+  //     assertion: undefined,
+  //     timeout: 10000
+  //   }, {
+  //     name: 'verify total duration',
+  //     command: ['query', { type: 'duration' }],
+  //     assertion: 'tl done',
+  //     timeout: 30000000
+  //   }]
+  // },
 
   // * TOTAL PHOTOS
   // {
@@ -179,13 +179,53 @@ exports.testObjects = [
   // },
 
   // * RAMPING
-  // {
-  //   name: 'Ramping',
-  //   instructions: [{
-  //     name: 'detect speed ramping',
-  //     command: undefined,
-  //     assertion: 'NumRampVals',
-  //     timeout: 30000
-  //   }]
-  // }
+  {
+    name: 'Ramping',
+    instructions: [{
+      name: 'navigate home',
+      command: ['navigate', 'home'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'click new TL',
+      command: ['click', '#newTimeLapse'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'set duration',
+      command: ['set', { type: 'duration', value: 10 }],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'navigate to speed ramping page',
+      command: ['navigate', '#timelapse/speedramping'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'set ramping',
+      command: ['set', { type: 'sramp', value: [5, 10] }],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'go back',
+      command: ['click', '#previous'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'navigate to upload',
+      command: ['navigate', '#timelapse/upload'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'validate TL packet',
+      command: ['click', '#timelapse'],
+      assertion: 'valid_pkt',
+      timeout: 30000
+    }, {
+      name: 'detect speed ramping pkt',
+      command: undefined,
+      assertion: 'NumRampVals',
+      timeout: 30000
+    }]
+  }
 ];

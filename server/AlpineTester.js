@@ -132,7 +132,7 @@ function testServer(tests, serial) {
   function verifyDuration(data) {
     if (mAssertPreviousTime === 0) mAssertPreviousTime = Date.now();
     if (data.includes(mAssert)) {
-      console.log(Date.now() - mAssertPreviousTime);
+      // console.log(Date.now() - mAssertPreviousTime);
       if (Date.now() - mAssertPreviousTime >= mAssertDuration - 5000 && Date.now() - mAssertPreviousTime <= (mAssertDuration + 5000)) {
         assertResult('pass');
       } else {

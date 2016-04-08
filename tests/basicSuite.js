@@ -203,7 +203,7 @@ exports.testObjects = [
       timeout: 30000
     }, {
       name: 'set ramping',
-      command: ['set', { type: 'sramp', value: [5, 10] }],
+      command: ['set', { type: 'sramp', value: [5, 45] }],
       assertion: undefined,
       timeout: 30000
     }, {
@@ -222,10 +222,10 @@ exports.testObjects = [
       assertion: 'valid_pkt',
       timeout: 30000
     }, {
-      name: 'detect speed ramping pkt',
-      command: undefined,
-      assertion: 'NumRampVals',
-      timeout: 30000
+      name: 'detect speed ramping',
+      command: ['listen'],
+      assertion: '#steps actually taken:',
+      timeout: 3000000
     }]
   }
 ];

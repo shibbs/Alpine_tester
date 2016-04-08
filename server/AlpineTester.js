@@ -29,13 +29,17 @@ function testServer(tests, serial) {
   var mAssertGoal;
   var mAssertPreviousTime = 0;
   var mAssertCount = 0;
+
   var mIntervalTest = false;
   var mDurationTest = false;
   var mTotalPhotoTest = false;
+  var mSrampTest = false;
 
   var mCurrTest = 0;
   var mTimestamp = 0;
   var mTests = [];
+
+  var lastStepsTaken = 0; // for Sramping
 
   function nop(result) {}
 
@@ -85,6 +89,7 @@ function testServer(tests, serial) {
         if (mIntervalTest) verifyInterval(data);
         else if (mDurationTest) verifyDuration(data);
         else if (mTotalPhotoTest) verifyTotalPhotos(data);
+        else if (mSrampTest) verifySramp(data);
       } else {
         if (mRecordSerial) { // If we've been recording then check the record
           if (mSerialRecording.includes(mAssert)) {
@@ -152,6 +157,21 @@ function testServer(tests, serial) {
     }
   }
 
+  function verifySramp(data) {
+    if (data.includes(mAssert)) {
+      // Extract number out of the serial print containing assert
+      // Example: #steps actually taken: , 20 <-- we want to pull this number out
+      var currStepsTaken = data.match(/\d+/g)[2];
+      // console.log(currStepsTaken);
+
+      // Make sure lastStepsTaken is not init value of 0, it should have a non-zero step value stored.
+      if (lastStepsTaken) {
+        if (currStepsTaken > lastStepsTaken) assertResult('pass');
+      }
+      lastStepsTaken = currStepsTaken;
+    }
+  }
+
   // * Enumerates through test suite
   function testDone(result) {
     if (result == 'pass') {
@@ -180,11 +200,22 @@ function testServer(tests, serial) {
       console.log("\t\t" + prettyDate() + " ~ Executing command: " + chalk.yellow(JSON.stringify(command)));
 
       switch(command[0]) {
+        case 'click':
+          mAssertSatisfy = false;
+          mSocket.emit(command[0], command[1]);
+          break;
+
         case 'wait':
           setTimeout(function() {
             commandResult({ result: 'pass' });
           }, command[1]);
           break;
+
+        case 'listen':
+          commandResult({ result: 'pass' });
+          mAssertSatisfy = true;
+          break;
+
         case 'query':
           if (command[1].type == 'interval') {
             mAssertSatisfy = true;
@@ -199,6 +230,18 @@ function testServer(tests, serial) {
           }
           mSocket.emit(command[0], command[1]);
           break;
+
+        case 'set':
+          if (command[1].type == 'duration') {
+            mAssertSatisfy = false;
+            mDurationTest = false;
+          } else if (command[1].type == 'sramp') {
+            mAssertSatisfy = true;
+            mSrampTest = true;
+          }
+          mSocket.emit(command[0], command[1]);
+          break;
+
         default:
           mSocket.emit(command[0], command[1]);
           break;

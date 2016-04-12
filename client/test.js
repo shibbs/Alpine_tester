@@ -55,10 +55,14 @@ var testInit = function() {
     switch (type) {
       case 'duration':
         RadianApp.app.visibleTimeLapse.set({ 'totalTimeMinutes': data.value });
+        RadianApp.app.visibleTimeLapse.set({ 'totalTimeMinutes': 0 });
         break;
       case 'sramp':
         ChartMonotonic.mapToView(data.value);
         ChartMonotonic.addNewPoint(data.value[0], data.value[1]);
+        break;
+      case 'eramp':
+
         break;
     }
     pass();

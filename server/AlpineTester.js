@@ -34,6 +34,7 @@ function testServer(tests, serial) {
   var mDurationTest = false;
   var mTotalPhotoTest = false;
   var mSrampTest = false;
+  var mErampTest = false;
 
   var mCurrTest = 0;
   var mTimestamp = 0;
@@ -90,6 +91,7 @@ function testServer(tests, serial) {
         else if (mDurationTest) verifyDuration(data);
         else if (mTotalPhotoTest) verifyTotalPhotos(data);
         else if (mSrampTest) verifySramp(data);
+        else if (mErampTest) verifyEramp(data);
       } else {
         if (mRecordSerial) { // If we've been recording then check the record
           if (mSerialRecording.includes(mAssert)) {
@@ -120,12 +122,16 @@ function testServer(tests, serial) {
           mAssertCount++;
         } else {
           if (Date.now() - mAssertPreviousTime >= (mAssertInterval - 30) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 30)) {
+            // console.log(Date.now() - mAssertPreviousTime);
             mAssertCount++;
             mAssertPreviousTime = Date.now();
-            // console.log(mAssertCount);
           } else {
+            if (mAssertCount < 3) {
+              mAssertCount++;
+              return;
+            }
             console.log(chalk.red("\t\tInterval Timer blew it."));
-            assertCount = 0;
+            mAssertCount = 0;
             assertResult('fail');
           }
         }
@@ -170,6 +176,10 @@ function testServer(tests, serial) {
       }
       lastStepsTaken = currStepsTaken;
     }
+  }
+
+  function verifyEramp(data) {
+
   }
 
   // * Enumerates through test suite
@@ -238,6 +248,9 @@ function testServer(tests, serial) {
           } else if (command[1].type == 'sramp') {
             mAssertSatisfy = true;
             mSrampTest = true;
+          } else if (command[1].type == 'eramp') {
+            mAssertSatisfy = true;
+            mErampTest = true;
           }
           mSocket.emit(command[0], command[1]);
           break;

@@ -15,22 +15,32 @@ exports.testObjects = [
       timeout: 30000
     }, {
       name: 'set duration',
-      command: ['set', { type: 'duration', value: 10 }],
+      command: ['set', { type: 'duration', value: 11 }],
       assertion: undefined,
       timeout: 30000
     }, {
-      name: 'navigate to speed ramping page',
-      command: ['navigate', '#timelapse/speedramping'],
+      name: 'navigate to exposure ramping page',
+      command: ['navigate', '#timelapse/expRamping'],
       assertion: undefined,
       timeout: 30000
     }, {
-      name: 'set ramping',
-      command: ['set', { type: 'sramp', value: [5, 45] }],
+      name: 'toggle exp ramping',
+      command: ['click', '#isBulbRamping'],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'set exp ramping values',
+      command: ['set', { type: 'eramp', value: [0, 8] }],
+      assertion: undefined,
+      timeout: 30000
+    }, {
+      name: 'click new TL',
+      command: ['click', '#startShutterLink'],
       assertion: undefined,
       timeout: 30000
     }, {
       name: 'go back',
-      command: ['click', '#previous'],
+      command: ['click', '.backLink'],
       assertion: undefined,
       timeout: 30000
     }, {
@@ -44,9 +54,14 @@ exports.testObjects = [
       assertion: 'valid_pkt',
       timeout: 30000
     }, {
-      name: 'detect exposure ramping',
+      name: 'verify Eramp (shutter)',
       command: ['listen'],
-      assertion: '#steps actually taken:',
+      assertion: 'setting shutter.',
+      timeout: 3000000
+    }, {
+      name: 'verify Eramp (ISO)',
+      command: ['listen'],
+      assertion: 'setting ISO.',
       timeout: 3000000
     }]
   }

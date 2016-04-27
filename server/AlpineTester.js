@@ -41,6 +41,8 @@ function testServer(tests, serial) {
   var mTests = [];
 
   var lastStepsTaken = 0; // for Sramping
+  var lastShutterVal = 0; // for Eramping
+  var lastISOVal = 0; // for Eramping
 
   function nop(result) {}
 
@@ -179,7 +181,28 @@ function testServer(tests, serial) {
   }
 
   function verifyEramp(data) {
+    if (data.includes(mAssert)) {
+      if (mAssert.includes('shutter')) {
+        // Extract hex code out of the serial print containing assert
+        // Example: setting shutter. Index: 15, Code: 0x00000050 <-- we want to pull this hex value
+        var currShutterVal = data.match(/[0-9A-Fa-x]{10}/gi);
+        console.log(currShutterVal);
 
+        // We want to know the general trend of these shutter values
+        if (parseInt(currShutterVal) > parseInt(lastShutterVal)) assertResult('pass');
+        lastShutterVal = currShutterVal;
+
+      } else if (mAssert.includes('ISO')) {
+        // Extract hex code out of the serial print containing assert
+        // Example: setting ISO. Index: 0, Code: 0x00000064 <-- we want to pull this hex value
+        var currISOVal = data.match(/[0-9A-Fa-x]{10}/gi);
+        console.log(currISOVal);
+
+        // We want to know the general trend of these shutter values
+        if (parseInt(currISOVal) > parseInt(lastISOVal)) assertResult('pass');
+        lastISOVal = currISOVal;
+      }
+    }
   }
 
   // * Enumerates through test suite

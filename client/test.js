@@ -55,14 +55,19 @@ var testInit = function() {
     switch (type) {
       case 'duration':
         RadianApp.app.visibleTimeLapse.set({ 'totalTimeMinutes': data.value });
-        RadianApp.app.visibleTimeLapse.set({ 'totalTimeMinutes': 0 });
+        RadianApp.app.visibleTimeLapse.set({ 'totalTimeHours': 0 });
         break;
       case 'sramp':
         ChartMonotonic.mapToView(data.value);
         ChartMonotonic.addNewPoint(data.value[0], data.value[1]);
         break;
       case 'eramp':
-
+        RadianApp.app.visibleTimeLapse.set({'durationMinutes': 10});
+        RadianApp.app.visibleTimeLapse.set({'durationHours': 0});
+        modifiedShutterIndex = data.value[0];
+        modifiedEndShutterIndex = data.value[1];
+        modifiedIsoIndex = data.value[0];
+        modifiedEndIsoIndex = data.value[1] - 3;
         break;
     }
     pass();

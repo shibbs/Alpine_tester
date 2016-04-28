@@ -15,7 +15,7 @@ exports.testObjects = [
       timeout: 30000
     }, {
       name: 'set duration',
-      command: ['set', { type: 'duration', value: 11 }],
+      command: ['set', { type: 'duration', value: 10 }],
       assertion: undefined,
       timeout: 30000
     }, {
@@ -24,18 +24,18 @@ exports.testObjects = [
       assertion: undefined,
       timeout: 30000
     }, {
+      name: 'set exp ramping values',
+      command: ['set', { type: 'eramp', value: [0, 5] }],
+      assertion: undefined,
+      timeout: 30000
+    }, {
       name: 'toggle exp ramping',
       command: ['click', '#isBulbRamping'],
       assertion: undefined,
       timeout: 30000
     }, {
-      name: 'set exp ramping values',
-      command: ['set', { type: 'eramp', value: [0, 8] }],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'click new TL',
-      command: ['click', '#startShutterLink'],
+      name: 'navigate to start exp view',
+      command: ['navigate', '#timelapse/expRamping/startshutter'],
       assertion: undefined,
       timeout: 30000
     }, {

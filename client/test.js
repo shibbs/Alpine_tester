@@ -67,7 +67,7 @@ var testInit = function() {
         modifiedShutterIndex = data.value[0];
         modifiedEndShutterIndex = data.value[1];
         modifiedIsoIndex = data.value[0];
-        modifiedEndIsoIndex = data.value[1] - 3;
+        modifiedEndIsoIndex = data.value[1];
         break;
     }
     pass();

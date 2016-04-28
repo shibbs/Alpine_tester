@@ -189,7 +189,9 @@ function testServer(tests, serial) {
         console.log(currShutterVal);
 
         // We want to know the general trend of these shutter values
-        if (parseInt(currShutterVal) > parseInt(lastShutterVal)) assertResult('pass');
+        if (parseInt(lastShutterVal)) {
+          if (parseInt(currShutterVal) > parseInt(lastShutterVal)) assertResult('pass');
+        }
         lastShutterVal = currShutterVal;
 
       } else if (mAssert.includes('ISO')) {
@@ -199,7 +201,9 @@ function testServer(tests, serial) {
         console.log(currISOVal);
 
         // We want to know the general trend of these shutter values
-        if (parseInt(currISOVal) > parseInt(lastISOVal)) assertResult('pass');
+        if (parseInt(lastISOVal)) {
+          if (parseInt(currISOVal) > parseInt(lastISOVal)) assertResult('pass');
+        }
         lastISOVal = currISOVal;
       }
     }
@@ -403,7 +407,6 @@ function testServer(tests, serial) {
     var prettyTable = [];
     for (var t in mTests) {
       var reportingTest = mTests[t];
-
       if (reportingTest.mResult == 'pass')
         prettyTable.push([chalk.yellow(reportingTest.mName) + ": ", chalk.green.bold(reportingTest.mResult)]);
       else

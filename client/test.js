@@ -56,11 +56,15 @@ var testInit = function() {
       case 'duration':
         RadianApp.app.visibleTimeLapse.set({ 'totalTimeMinutes': data.value });
         RadianApp.app.visibleTimeLapse.set({ 'totalTimeHours': 0 });
+        pass();
         break;
+
       case 'sramp':
         ChartMonotonic.mapToView(data.value);
         ChartMonotonic.addNewPoint(data.value[0], data.value[1]);
+        pass();
         break;
+
       case 'eramp':
         RadianApp.app.visibleTimeLapse.set({'durationMinutes': 10});
         RadianApp.app.visibleTimeLapse.set({'durationHours': 0});
@@ -68,9 +72,19 @@ var testInit = function() {
         modifiedEndShutterIndex = data.value[1];
         modifiedIsoIndex = data.value[0];
         modifiedEndIsoIndex = data.value[1];
+
+        // Send back erampVal array to testServer!
+        var erampValues = [
+          radianShutterArray[modifiedShutterIndex],
+          radianShutterArray[modifiedEndShutterIndex],
+          radianISOArray[modifiedIsoIndex],
+          radianISOArray[modifiedEndIsoIndex]
+        ]
+
+        var dataObject = { type: 'erampValues', value: erampValues };
+        pass(dataObject);
         break;
     }
-    pass();
   });
 
   socket.on('query', function(data) {
@@ -81,11 +95,13 @@ var testInit = function() {
         var interval = RadianApp.app.visibleTimeLapse.get('intervalSeconds') * 1000;
         var dataObject = { type: 'interval', value: interval };
         break;
+
       case 'duration':
         var runningTimeLapse = RadianApp.app.getRunningTimeLapse();
         var duration = runningTimeLapse.getTimeLapseInSeconds() * 1000;
         var dataObject = { type: 'duration', value: duration };
         break;
+
       case 'totalPhotos':
         var runningTimeLapse = RadianApp.app.getRunningTimeLapse();
         var totalPhotos = runningTimeLapse.getStats().totalPhotos;

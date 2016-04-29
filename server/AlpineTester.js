@@ -1,9 +1,10 @@
 function testServer(tests, serial) {
-  var testObjects = require(tests).testObjects;
-
-  var fs = require('fs');
   var PORT = 3000;
+  var testObjects = require(tests).testObjects;
   var AlpineTest = require('./AlpineTest').AlpineTest;
+  var chalk = require('chalk');
+  var table = require('text-table');
+  var fs = require('fs');
   var app = require('express')();
   var server = require('http').Server(app);
   var io = require('socket.io')(server);
@@ -13,9 +14,8 @@ function testServer(tests, serial) {
     baudrate: 115200,
     parser: sp.parsers.readline("\n")
   }, false);
-  var chalk = require('chalk');
-  var table = require('text-table');
 
+  // * Main test variables
   var mSocket;
   var mAssert = '';
   var mAssertListen = false;
@@ -30,16 +30,21 @@ function testServer(tests, serial) {
   var mAssertPreviousTime = 0;
   var mAssertCount = 0;
 
+  // * Test Management
+  var mCurrTest = 0;
+  var mTimestamp = 0;
+  var mTests = [];
+
+  // * Test states
   var mIntervalTest = false;
   var mDurationTest = false;
   var mTotalPhotoTest = false;
   var mSrampTest = false;
   var mErampTest = false;
 
-  var mCurrTest = 0;
-  var mTimestamp = 0;
-  var mTests = [];
-
+  // * Ramping
+  var eRampEv = [];
+  var totalShutterEv, totalIsoEv, cumulativeEv;
   var lastStepsTaken = 0; // for Sramping
   var lastShutterVal = 0; // for Eramping
   var lastISOVal = 0; // for Eramping
@@ -165,6 +170,7 @@ function testServer(tests, serial) {
     }
   }
 
+  // * Verifies speed ramping
   function verifySramp(data) {
     if (data.includes(mAssert)) {
       // Extract number out of the serial print containing assert
@@ -180,12 +186,14 @@ function testServer(tests, serial) {
     }
   }
 
+  // * Verifies exposure ramping
   function verifyEramp(data) {
     if (data.includes(mAssert)) {
       if (mAssert.includes('shutter')) {
         // Extract hex code out of the serial print containing assert
         // Example: setting shutter. Index: 15, Code: 0x00000050 <-- we want to pull this hex value
         var currShutterVal = data.match(/[0-9A-Fa-x]{10}/gi);
+        var currShutterEv = computeDeltaEVShutter(str2Num(currShutterVal), str2Num(erampValues[1]));
         console.log(currShutterVal);
 
         // We want to know the general trend of these shutter values
@@ -311,13 +319,24 @@ function testServer(tests, serial) {
           // Assertion interval is now the interval of the timelapse.
           mAssertInterval = result.value;
           break;
+
         case 'duration':
           // Our duration is total duration of the timelapse.
           mAssertDuration = result.value;
           break;
+
         case 'totalPhotos':
           // Our goal is now the total number of photos.
           mAssertGoal = result.value;
+          break;
+
+        case 'erampValues':
+          // erampValues gets passed back from the client
+          // [startShutter, endShutter, startISO, endISO]
+          var erampValues = result.value;
+          totalShutterEv = computeDeltaEVShutter(str2Num(erampValues[0]), str2Num(erampValues[1]));
+          totalIsoEv = computeDeltaEVIso(str2Num(erampValues[2]), str2Num(erampValues[3]));
+          cumulativeEv = totalShutterEv + totalIsoEv;
           break;
       }
     }
@@ -424,6 +443,65 @@ function testServer(tests, serial) {
     console.log(table(prettyTable));
     console.log("Exiting...");
     process.exit();
+  }
+
+  // ********************************************************************************
+  // * ExpRamping Helpers
+  function str2Num(strElement) {
+    if(!strElement || strElement == 'No Data Yet'){
+      return 0;
+    }
+    if(strElement.indexOf('"') != -1)
+      return (strElement.replace('"', '.'));
+    if(strElement.indexOf('/') != -1){
+      var arr = strElement.split('/');
+      return eval(arr[0]) / eval(arr[1]);
+    }
+    if(strElement.indexOf('BULB') != -1){
+      return 0;
+    }
+
+    //Nikon Iso Settings
+    if(strElement.indexOf('Hi') != -1){
+      return strElement;
+    }
+    return eval(strElement);
+  }
+
+  function computeDeltaEVShutter(startShutter, finalShutter) {
+    if (!startShutter || !finalShutter) {
+      //values not set. Assume no ramping present
+      return 0;
+    }
+    var deltaShutter;
+
+    if (finalShutter > startShutter) {
+      deltaShutter = finalShutter / startShutter;
+      sign = 1;
+    } else {
+      deltaShutter = (startShutter / finalShutter);
+      sign = -1;
+    }
+    deltaShutter = (Math.log(deltaShutter) / Math.log(2)) * sign;
+    return deltaShutter;
+  }
+
+  function computeDeltaEVIso(startIso, finalIso) {
+    if (!startIso || !finalIso) {
+      //values not set. Assume no ramping present
+      return 0;
+    }
+    var deltaIso;
+
+    if (finalIso > startIso) {
+      deltaIso = finalIso / startIso;
+      sign = 1;
+    } else {
+      deltaIso = (startIso / finalIso);
+      sign = -1;
+    }
+    deltaIso = (Math.log(deltaIso) / Math.log(2)) * sign;
+    return deltaIso;
   }
 }
 

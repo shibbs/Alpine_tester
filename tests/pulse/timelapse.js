@@ -9,21 +9,6 @@ exports.testObjects = [
       assertion: undefined,
       timeout: 5000
     }, {
-    //   name: 'toggle to connect',
-    //   command: ['toggle', ''],
-    //   assertion: undefined,
-    //   timeout: 5000
-    // }, {
-    //   name: 'wait...',
-    //   command: ['wait', 5000],
-    //   assertion: undefined,
-    //   timeout: 30000
-    // }, {
-    //   name: 'toggle to connect',
-    //   command: ['toggle', ''],
-    //   assertion: undefined,
-    //   timeout: 5000
-    // }, {
       name: 'click Time Lapse & validate TL packet',
       command: ['click', '.TLStart'],
       assertion: 'HCI: Sending data',

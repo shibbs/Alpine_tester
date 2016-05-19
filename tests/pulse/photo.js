@@ -15,7 +15,7 @@ exports.testObjects = [
       timeout: 5000
     }, {
       name: 'wait...',
-      command: ['wait', 5000],
+      command: ['wait', 3000],
       assertion: undefined,
       timeout: 30000
     }, {
@@ -29,9 +29,19 @@ exports.testObjects = [
       assertion: 'HCI: Sending data',
       timeout: 30000
     }, {
+      name: 'wait...',
+      command: ['wait', 500],
+      assertion: undefined,
+      timeout: 30000
+    }, {
       name: 'click photo button',
       command: ['click', '.takePhoto'],
       assertion: 'HCI: Sending data',
+      timeout: 30000
+    }, {
+      name: 'wait...',
+      command: ['wait', 500],
+      assertion: undefined,
       timeout: 30000
     }, {
       name: 'click photo button',

@@ -9,6 +9,11 @@ exports.testObjects = [
       assertion: undefined,
       timeout: 5000
     }, {
+      name: 'set duration',
+      command: ['set', { type: 'duration', value: [5, 45] }],
+      assertion: undefined,
+      timeout: 5000
+    }, {
       name: 'click Time Lapse & validate TL packet',
       command: ['click', '.TLStart'],
       assertion: 'HCI: Sending data',

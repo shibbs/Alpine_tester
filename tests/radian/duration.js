@@ -31,7 +31,7 @@ exports.testObjects = [
     }, {
       name: 'verify total duration',
       command: ['query', { type: 'duration' }],
-      assertion: 'tl done',
+      assertion: 'Done with timelapse',
       timeout: 30000000
     }]
   }

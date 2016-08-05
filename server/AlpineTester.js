@@ -120,27 +120,24 @@ function testServer(tests, serial) {
 
   // * Verifies TL interval
   function verifyInterval(data) {
-    if (mAssertCount == mAssertGoal) {
-      assertResult('pass');
-    } else {
-      if (data.includes(mAssert)) { // Time this and count it
-        if (mAssertCount == 0) {
-          mAssertPreviousTime = Date.now();
+    if (data.includes(mAssert)) { // Time this and count it
+      if (mAssertPreviousTime == 0) {
+        mAssertPreviousTime = Date.now();
+        mAssertCount++;
+      } else {
+        if (Date.now() - mAssertPreviousTime >= (mAssertInterval - 100) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 100)) {
+          console.log(chalk.yellow("\t\t\t" + mAssertCount + " - Interval: " + (Date.now() - mAssertPreviousTime)));
           mAssertCount++;
+          mAssertPreviousTime = Date.now();
+          if (mAssertCount > mAssertGoal) assertResult('pass');
         } else {
-          if (Date.now() - mAssertPreviousTime >= (mAssertInterval - 30) && Date.now() - mAssertPreviousTime <= (mAssertInterval + 30)) {
-            // console.log(Date.now() - mAssertPreviousTime);
+          if (mAssertCount < 3) {
             mAssertCount++;
-            mAssertPreviousTime = Date.now();
-          } else {
-            if (mAssertCount < 3) {
-              mAssertCount++;
-              return;
-            }
-            console.log(chalk.red("\t\tInterval Timer blew it."));
-            mAssertCount = 0;
-            assertResult('fail');
+            return;
           }
+          console.log(chalk.red("\t\tInterval Timer blew it."));
+          mAssertCount = 0;
+          assertResult('fail');
         }
       }
     }
@@ -166,6 +163,7 @@ function testServer(tests, serial) {
     } else {
       if (data.includes(mAssert)) {
         mAssertCount++;
+        console.log(chalk.yellow("\t\t\tPhoto #: " + mAssertCount));
       }
     }
   }
@@ -427,9 +425,9 @@ function testServer(tests, serial) {
     for (var t in mTests) {
       var reportingTest = mTests[t];
       if (reportingTest.mResult == 'pass')
-        prettyTable.push([chalk.yellow(reportingTest.mName) + ": ", chalk.green.bold(reportingTest.mResult)]);
+        prettyTable.push([chalk.yellow(reportingTest.mName) + ": \t\t", chalk.green.bold(reportingTest.mResult)]);
       else
-        prettyTable.push([chalk.yellow(reportingTest.mName) + ": ", chalk.red.bold(reportingTest.mResult)]);
+        prettyTable.push([chalk.yellow(reportingTest.mName) + ": \t\t", chalk.red.bold(reportingTest.mResult)]);
 
       for (var i in reportingTest.mInstructions) {
         var reportingInstruction = reportingTest.mInstructions[i];

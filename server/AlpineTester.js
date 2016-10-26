@@ -250,9 +250,7 @@ function testServer(tests, serial) {
           break;
 
         case 'wait':
-          setTimeout(function() {
-            commandResult({ result: 'pass' });
-          }, command[1]);
+          mSocket.emit(command[0], command[1]);
           break;
 
         case 'listen':

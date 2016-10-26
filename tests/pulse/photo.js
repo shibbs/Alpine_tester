@@ -8,45 +8,30 @@ exports.testObjects = [
       command: ['navigate', 'photo'],
       assertion: undefined,
       timeout: 5000
-    }, {
-      name: 'toggle to connect',
-      command: ['toggle', ''],
-      assertion: undefined,
-      timeout: 5000
-    }, {
-      name: 'wait...',
-      command: ['wait', 3000],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'toggle to connect',
-      command: ['toggle', ''],
-      assertion: undefined,
-      timeout: 5000
-    }, {
+    },{
       name: 'click photo button',
-      command: ['click', '.takePhoto'],
-      assertion: 'HCI: Sending data',
+      command: ['on-tap', '#bulbButtonEnd'],
+      assertion: 'usb_photo: Exit',
       timeout: 30000
     }, {
       name: 'wait...',
-      command: ['wait', 500],
+      command: ['wait', 5000],
       assertion: undefined,
       timeout: 30000
     }, {
       name: 'click photo button',
-      command: ['click', '.takePhoto'],
-      assertion: 'HCI: Sending data',
+      command: ['on-tap', '#bulbButtonEnd'],
+      assertion: 'usb_photo: Exit',
       timeout: 30000
     }, {
       name: 'wait...',
-      command: ['wait', 500],
+      command: ['wait', 5000],
       assertion: undefined,
       timeout: 30000
     }, {
       name: 'click photo button',
-      command: ['click', '.takePhoto'],
-      assertion: 'HCI: Sending data',
+      command: ['on-tap', '#bulbButtonEnd'],
+      assertion: 'usb_photo: Exit',
       timeout: 30000
     }]
   }

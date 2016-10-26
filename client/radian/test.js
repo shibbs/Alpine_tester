@@ -79,7 +79,7 @@ var testInit = function() {
           radianShutterArray[modifiedEndShutterIndex],
           radianISOArray[modifiedIsoIndex],
           radianISOArray[modifiedEndIsoIndex]
-        ]
+        ];
 
         var dataObject = { type: 'erampValues', value: erampValues };
         pass(dataObject);

@@ -21,7 +21,11 @@ module.exports.AlpineTest = function AlpineTest(testDescription) {
         return false;
       }
 
-      console.log(chalk.red("Did not understand result!"));
+      console.log(chalk.red("Did not understand result! " + result));
+      if(result === undefined){
+        console.log("Unrecoverable error. Exiting...");
+        process.exit();
+      }
       return false;
     },
 

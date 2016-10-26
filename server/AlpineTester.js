@@ -1,6 +1,6 @@
 function testServer(tests, serial) {
   var PORT = 3000;
-  var testObjects = require(tests).testObjects;
+  var testObjects = require('../tests/'+tests).testObjects;
   var AlpineTest = require('./AlpineTest').AlpineTest;
   var chalk = require('chalk');
   var table = require('text-table');
@@ -121,7 +121,7 @@ function testServer(tests, serial) {
   // * Verifies TL interval
   function verifyInterval(data) {
     if (data.includes(mAssert)) { // Time this and count it
-      if (mAssertPreviousTime == 0) {
+      if (mAssertPreviousTime === 0) {
         mAssertPreviousTime = Date.now();
         mAssertCount++;
       } else {
@@ -503,4 +503,19 @@ function testServer(tests, serial) {
   }
 }
 
+function printHelp(){
+  console.log("Welcome to Alptest!");
+  console.log("This program takes 2 arguments");
+  console.log("The first is the path to the testfile you want to execute.");
+  console.log("The second is the numerical digits of the usbmodem port you want to listen to.");
+}
+
+process.stdout.write('\033c');
+
+if( process.argv.length < 3 || process.argv[2].localeCompare('help') === 0){
+  printHelp();
+  process.exit();
+}
+
+// Start the test harness
 testServer(process.argv[2], process.argv[3]);

@@ -55,7 +55,7 @@ function testServer(tests, serial) {
   // * Initialization
 
   io.on('connection', function(socket) {
-    console.log(chalk.green("Radian App connected!"));
+    console.log(chalk.green("App connected!"));
     mSocket = socket;
     startSerial();
     socket.on('result', commandResult);
@@ -76,6 +76,7 @@ function testServer(tests, serial) {
     serialPort.open(function(error) {
       if (error) {
         console.log(chalk.red('Failed to open serial port: ' + error));
+        process.exit();
       } else {
         console.log(chalk.green('Opened serial port. . . \nRunning tests. . . \n'));
         resetApp();
@@ -508,6 +509,7 @@ function printHelp(){
   console.log("This program takes 2 arguments");
   console.log("The first is the path to the testfile you want to execute.");
   console.log("The second is the numerical digits of the usbmodem port you want to listen to.");
+  console.log("Example:  npm start pulse/photo 14121");
 }
 
 process.stdout.write('\033c');

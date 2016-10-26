@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": false,
   "description": "Test suite for Alpine devices.",
+  "scripts": {
+    "start": "node server/AlpineTester.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/shibbs/Alpine_tester.git"

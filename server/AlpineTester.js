@@ -1,5 +1,5 @@
 function testServer(tests, serial) {
-  var PORT = 3000;
+  var PORT = 48626;
   var testObjects = require('../tests/'+tests).testObjects;
   var AlpineTest = require('./AlpineTest').AlpineTest;
   var chalk = require('chalk');
@@ -347,7 +347,7 @@ function testServer(tests, serial) {
   function commandTimeout() {
     console.log("\t\t" + prettyDate() + " ~ Command timed out: " + chalk.red("fail"));
     mCommandTimeout = undefined;
-    mTestInst.onCommandDone('fail');
+    mTestInst.onCommandDone({result: 'fail'});
   }
 
   // ********************************************************************************

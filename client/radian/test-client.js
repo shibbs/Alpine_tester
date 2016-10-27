@@ -1,6 +1,6 @@
 var testInit = function() {
   console.log("Connecting to the test server...");
-  var socket = io.connect("http://10.1.10.124:3000");
+  var socket = io.connect("http://10.1.10.124:48626");
 
   var pass = function(dataObject) {
     console.log("Returning result: Pass");

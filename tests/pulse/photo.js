@@ -1,38 +1,19 @@
-exports.testObjects = [
+var lib = require('./instruction-library.js');
 
-  // * PHOTO
+exports.testObjects = [
   {
     name: 'Take Photo',
-    instructions: [{
-      name: 'navigate to Photo',
-      command: ['navigate', 'photo'],
-      assertion: undefined,
-      timeout: 5000
-    },{
-      name: 'click photo button',
-      command: ['on-tap', '#bulbButtonEnd'],
-      assertion: 'usb_photo: Exit',
-      timeout: 30000
-    }, {
-      name: 'wait...',
-      command: ['wait', 5000],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'click photo button',
-      command: ['on-tap', '#bulbButtonEnd'],
-      assertion: 'usb_photo: Exit',
-      timeout: 30000
-    }, {
-      name: 'wait...',
-      command: ['wait', 5000],
-      assertion: undefined,
-      timeout: 30000
-    }, {
-      name: 'click photo button',
-      command: ['on-tap', '#bulbButtonEnd'],
-      assertion: 'usb_photo: Exit',
-      timeout: 30000
-    }]
+    instructions: [
+      lib.photoNav,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto,
+      lib.thumbPhoto]
   }
 ];

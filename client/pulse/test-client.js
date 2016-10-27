@@ -1,4 +1,6 @@
-if (vm.testing) {
+var testing = false;
+
+if (testing) {
 	var pass = function(dataObject) {
 		console.log("Returning result: Pass");
 

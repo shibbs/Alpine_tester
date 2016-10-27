@@ -1,6 +1,8 @@
 var testing = false;
 
 if (testing) {
+	var socket = io.connect("http://10.1.10.124:3000");
+	
 	var pass = function(dataObject) {
 		console.log("Returning result: Pass");
 

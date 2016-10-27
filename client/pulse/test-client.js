@@ -61,13 +61,13 @@ if (vm.testing) {
 
 	socket.on('ng-click', function(element) {
 		console.log("Clicking: " + element);
-		angular.element(document.querySelector(element)).trigger('tap');
+		angular.element(document.querySelector(element)).triggerHandler('click');
 		pass();
 	});
 
 	socket.on('ng-tap', function(element) {
 		console.log("Tapping: " + element);
-		angular.element(document.querySelector(element)).trigger('tap');
+		angular.element(document.querySelector(element)).triggerHandler('tap');
 		pass();
 	});
 }

@@ -508,6 +508,10 @@ function printHelp(){
   console.log("The first is the path to the testfile you want to execute.");
   console.log("The second is the numerical digits of the usbmodem port you want to listen to.");
   console.log("Example:  npm start pulse/photo 14121");
+  console.log("");
+  console.log("");
+  console.log("Remember to include the client side code to the app, and pull in the socket.io dependency from the CDN");
+  console.log("i.e. paste this: <script src='https://cdn.socket.io/socket.io-1.4.5.js'></script>");
 }
 
 process.stdout.write('\033c');

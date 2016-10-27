@@ -24,7 +24,9 @@ module.exports.AlpineTest = function AlpineTest(testDescription) {
       console.log(chalk.red("Did not understand result! " + result));
       if(result === undefined){
         console.log("Unrecoverable error. Exiting...");
-        process.exit();
+        console.log("Hint: an undefined response usually indicates a problem with the socket.");
+        console.log("Make sure that the ws and wss protocols are enabled in the Content Security Policy");
+        process.exit(1);
       }
       return false;
     },

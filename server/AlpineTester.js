@@ -422,16 +422,20 @@ function testServer(tests, serial) {
   function reportResults() {
     console.log("\n\n|---------------- RESULTS ---------------|");
     var prettyTable = [];
+    var plainText = '';
     for (var t in mTests) {
       var reportingTest = mTests[t];
-      if (reportingTest.mResult == 'pass')
+      if (reportingTest.mResult == 'pass'){
         prettyTable.push([chalk.yellow(reportingTest.mName) + ": \t\t", chalk.green.bold(reportingTest.mResult)]);
-      else
+      }else{
         prettyTable.push([chalk.yellow(reportingTest.mName) + ": \t\t", chalk.red.bold(reportingTest.mResult)]);
+      }
+      plainText += reportingTest.mName + ": \t\t" + reportingTest.mResult + "\n";
 
       for (var i in reportingTest.mInstructions) {
         var reportingInstruction = reportingTest.mInstructions[i];
 
+        plainText += '\t' + "- " + reportingInstruction.name + '\t\t' + reportingInstruction.result + '\n';
         if (reportingInstruction.result == 'pass')
           prettyTable.push(['\t' + "- " + reportingInstruction.name, chalk.green(reportingInstruction.result)]);
         else
@@ -439,7 +443,10 @@ function testServer(tests, serial) {
       }
     }
 
-    fs.writeFile('../logs/test-results'+Date.now()+'.log', table(prettyTable), function (err){});
+    // console.log(plainText);
+
+    fs.writeFileSync('./logs/test-results'+Date.now()+'.log', plainText, 'utf8');
+
     console.log(table(prettyTable));
     console.log("Exiting...");
     process.exit();

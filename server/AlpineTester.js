@@ -365,6 +365,7 @@ function testServer(tests, serial) {
 
   function assertTimeout() {
     console.log("\t\t" + prettyDate() + " ~ Assert timed out: " + chalk.red("fail"));
+    fs.appendFile('../logs/assertFail.log', mSerialRecording+' \n', function (err){});
     // console.log(mSerialRecording);
     clearAssert();
     mTestInst.onAssertDone('fail');
@@ -437,6 +438,8 @@ function testServer(tests, serial) {
           prettyTable.push(['\t' + "- " + reportingInstruction.name, chalk.red(reportingInstruction.result)]);
       }
     }
+
+    fs.writeFile('../logs/test-results'+Date.now()+'.log', table(prettyTable), function (err){});
     console.log(table(prettyTable));
     console.log("Exiting...");
     process.exit();
